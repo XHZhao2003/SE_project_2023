@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
+    "@element-plus/icons-vue": "^2.1.0",
+    "element-plus": "^2.4.1",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
