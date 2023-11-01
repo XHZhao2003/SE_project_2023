@@ -4,7 +4,7 @@ import { ref } from 'vue'
 </script>
 
 <template>
-    <div class="loginBox">
+    <div class="registerBox">
         <div style="width: 100%; height: 40%;text-align: center; overflow: hidden;">
             <img src="../assets/ERoad-logo.png" style="width: 100%; height: 100% ;">
         </div>
@@ -12,7 +12,7 @@ import { ref } from 'vue'
             flex-grow: 0;">
             <el-form :model="user" style="width: 80%;" :rules="rules" ref="loginRef">
                 <div style="font-size: 20px; font-weight: bold; text-align: center;  margin-bottom: 20px;">
-                    欢迎登录
+                    欢迎注册
                 </div>
                 <el-form-item prop="username">
                     <el-input prefix-icon="Avatar" size="medium" v-model="user.username" placeholder="请输入账号"></el-input>
@@ -71,7 +71,7 @@ export default {
 </script>
 
 <style>
-.loginBox {
+.registerBox {
     display: flex;
     flex-direction: column;
     justify-content: center;
