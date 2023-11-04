@@ -1,10 +1,12 @@
 <script setup>
-import { Avatar, ElementPlus, Lock } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { Avatar, ElementPlus, Lock } from "@element-plus/icons-vue";
+import { ref } from "vue";
+defineEmits(['have-account-login'])
+
 </script>
 
 <template>
-    <div class="loginBox">
+    <div class="registerBox">
         <div style="width: 100%; height: 40%;text-align: center; overflow: hidden;">
             <img src="../assets/ERoad-logo.png" style="width: 100%; height: 100% ;">
         </div>
@@ -12,7 +14,7 @@ import { ref } from 'vue'
             flex-grow: 0;">
             <el-form :model="user" style="width: 80%;" :rules="rules" ref="loginRef">
                 <div style="font-size: 20px; font-weight: bold; text-align: center;  margin-bottom: 20px;">
-                    欢迎登录
+                    欢迎注册
                 </div>
                 <el-form-item prop="username">
                     <el-input prefix-icon="Avatar" size="medium" v-model="user.username" placeholder="请输入账号"></el-input>
@@ -27,7 +29,10 @@ import { ref } from 'vue'
                     </el-button>
                 </el-form-item>
                 <div style="display: flex">
-                    <div style="flex: 1; text-align: left;">还没有账号？请<span style="color: red; cursor: pointer;">注册</span>
+                    <div style="flex: 1; text-align: left;">已经有账号：请
+                        <span style="color: red; cursor: pointer"
+                        @click="$emit('have-account-login')"
+                        >登录</span>
                     </div>
                     <div style="flex: 1; text-align: right;">忘记密码</div>
                 </div>
@@ -38,49 +43,44 @@ import { ref } from 'vue'
 
 <script>
 export default {
-    data() {
-        return {
-            user: {
-                username: '',
-                password: ''
-            },
-            rules: {
-                username: [
-                    { required: true, message: "请输入账号", trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: "请输入密码", trigger: 'blur' }
-                ]
-            },
+  data() {
+    return {
+      user: {
+        username: "",
+        password: "",
+      },
+      rules: {
+        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+      },
+    };
+  },
+  methods: {
+    EventLogin() {
+      this.$refs.loginRef.validate((valid) => {
+        // 表单自身rules的规则检查
+        if (valid) {
+          // 这里与后端交互
+          //console.log("请求成功")
+          this.$router.push("/Map");
         }
+      });
     },
-    methods: {
-        EventLogin() {
-            this.$refs.loginRef.validate((valid) => {         // 表单自身rules的规则检查
-                if (valid) {
-                    // 这里与后端交互
-                    //console.log("请求成功")
-                    this.$router.push('/Map')
-                }
-            })
-        }
-    }
-
-
-}
+  },
+};
 </script>
 
 <style>
-.loginBox {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.registerBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-    background-color: white;
-    width: 30%;
-    height: 60%;
-    border-radius: 5px;
-    overflow: hidden;
+  background-color: white;
+  width: 30%;
+  height: 60%;
+  border-radius: 5px;
+  overflow: hidden;
 }
 </style>

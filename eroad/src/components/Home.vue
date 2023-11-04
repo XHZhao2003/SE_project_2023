@@ -24,8 +24,10 @@
         </el-menu>
     </div>
 
-    <Login v-if="ShowLogin" style="position: absolute; left: 35%; top: 20%;"/>
-    <Register v-else-if="ShowRegister" style="position: absolute; left: 35%; top: 20%;"/>
+    <Login v-if="ShowLogin" style="position: absolute; left: 35%; top: 20%;"
+    @no-account-register="switchToRegister"/>
+    <Register v-else-if="ShowRegister" style="position: absolute; left: 35%; top: 20%;"
+    @have-account-login="switchToLogin"/>
     
     
 </template>
