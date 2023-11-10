@@ -8,6 +8,7 @@
 
 <body>
     <form action="/login/index/" method="post">
+        {% csrf_token %}
         <p><label>用户名：</label><input name="user" /></p>
         <p><label>密码：</label><input name="pwd" /></p>
         <input type="submit" value="登录">

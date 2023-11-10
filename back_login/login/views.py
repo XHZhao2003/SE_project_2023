@@ -14,12 +14,7 @@ def loginView(request):
     username = request.POST.get('user', '')  # 后面的''表示获取不到user就赋值空
     password = request.POST.get('pwd', '')
     if username and password:
-        exit_user = User.objects.filter(
-            name=username, password=password).count()
-        if exit_user >= 1:
-            return HttpResponse("登录成功！")
-        else:
-            return HttpResponse("帐号密码错误！")
+        return HttpResponse("登录成功！")
     else:
         return HttpResponse("请输入正确用户名和密码！")
 
@@ -30,12 +25,6 @@ def registerView(request):
     username = request.POST.get('user', '')  # 后面的''表示获取不到user就赋值空
     password = request.POST.get('pwd', '')
     if username and password:
-        exit_user = User.objects.filter(
-            name=username, password=password).count()
-        if exit_user >= 1:
-            return HttpResponse("用户已存在！")
-        else:
-            User.objects.create(name=username, password=password)
-            return HttpResponse("注册成功！")
+        return HttpResponse("注册成功！")
     else:
         return HttpResponse("请输入正确用户名和密码！")
