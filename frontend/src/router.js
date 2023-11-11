@@ -13,6 +13,10 @@ const router=createRouter({
         {
             path:"/Home",
             component: Home
+        },
+        {
+            path:"/",
+            component: Home
         }
     ]
 });

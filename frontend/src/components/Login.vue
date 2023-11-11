@@ -70,6 +70,8 @@ defineEmits(["no-account-register"]);
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
@@ -85,11 +87,12 @@ export default {
   },
   methods: {
     EventLogin() {
+      const that = this;
       this.$refs.loginRef.validate((valid) => {
         // 表单自身rules的规则检查
-        if (valid) {
-          // 这里与后端交互
-          //console.log("请求成功")
+        if(valid) {
+          //axios.get('/api/AppUser')
+          
           this.$router.push("/Map");
         }
       });
