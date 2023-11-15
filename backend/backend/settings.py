@@ -129,3 +129,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_HOST_USER = '1667158832@qq.com'
+EMAIL_HOST_PASSWORD = 'qystatyrkslvdcce'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
