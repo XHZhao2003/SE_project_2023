@@ -4,11 +4,12 @@
         <div id="building">
             <project-name>
                 <p>
-                    e-road
+                    Choose what you want!
                 </p>
             </project-name>
             <start>
-                <button @click="Start">start now</button>
+                <button @click="Start">路况地图</button>
+                <button @click="Goto">生活指南</button>
                 <router-view></router-view>
             </start>
         </div>
@@ -22,6 +23,9 @@ export default{
     methods:{
         Start(){
             this.$router.push('/Map')
+        },
+        Goto(){
+            this.$router.push('/Lifestyle')
         }
     }
 }
@@ -38,18 +42,18 @@ export default{
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  opacity: 0.75;
+  opacity: 1;
 }
 div project-name{
     margin:50px auto;
     font-size:100px;
     text-align: center;
-    color: ivory;
+    color: darkviolet;
 }
 div start button{
-    width:99%;
-    margin:50px auto;
-    height:45px;
+    width:50%;
+    margin:30px auto;
+    height:65px;
     background-color: darkviolet;
     color: whitesmoke;
     font-size: 16px;
@@ -57,11 +61,12 @@ div start button{
     border-radius: 20px;
 }
 #building{
-    margin: 200px auto;
-    background-color: null;
-    width: 400px;
-    height: 200px;
-    padding: 20px;
+    margin: 30px auto;
+    background-color: rgb(239, 245, 252);
+    width: 1000px;
+    height: 600px;
+    padding: 30px;
     border-radius: 10px;
+    opacity: 0.8;
 }
 </style>

@@ -93,7 +93,7 @@ export default {
         if(valid) {
           //axios.get('/api/AppUser')
           
-          this.$router.push("/Map");
+          this.$router.push("/HellowWorld");
         }
       });
     },

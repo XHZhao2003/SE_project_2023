@@ -97,7 +97,7 @@ export default {
             .post("http://127.0.0.1:8000/api/AppUser/register/", senddata)
             .then((res) => {
               console.log(res);
-              this.$router.push("/Map");
+              this.$router.push("/HellowWorld");
             })
             .catch((error) => {
               console.log(error);
