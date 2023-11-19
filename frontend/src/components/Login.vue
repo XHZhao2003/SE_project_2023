@@ -36,7 +36,7 @@ defineEmits(["no-account-register"]);
             prefix-icon="Avatar"
             size="medium"
             v-model="user.username"
-            placeholder="请输入账号"
+            placeholder="请输入用户名/邮箱"
           ></el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -57,7 +57,7 @@ defineEmits(["no-account-register"]);
           <div style="flex: 1; text-align: left">
             还没有账号？请
             <span
-              style="color: red; cursor: pointer"
+              style="color: rgb(92, 214, 92); cursor: pointer"
               @click="$emit('no-account-register')"
               >注册
             </span>
@@ -91,9 +91,26 @@ export default {
       this.$refs.loginRef.validate((valid) => {
         // 表单自身rules的规则检查
         if(valid) {
-          //axios.get('/api/AppUser')
+          let senddata = {
+            action:"login",
+            username: this.user.username,
+            password: this.user.password
+          }
+          axios
+            .post("http://127.0.0.1:8000/api/AppUser/", senddata)
+            .then((res) => {
+              console.log(res);
+              if(res.data.status==200){
+                this.$router.push("/Map");
+              }
+              else{
+                alert("用户名或密码错误");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
           
-          this.$router.push("/HellowWorld");
         }
       });
     },
