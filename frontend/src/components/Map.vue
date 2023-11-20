@@ -10,98 +10,107 @@
           <div id="container"></div>
         </el-main>
         <Transition>
-        <el-aside
-          v-if="ShowRoadFlag"
-          id="asideinfo"
-          style="background-color: aliceblue; text-align: center"
-        >
-          <div
-            style="
-              width: 300px;
-              text-align: center;
-              font-size: 25px;
-              font-weight: bold;
-            "
+          <el-aside
+            v-if="ShowRoadFlag"
+            id="asideinfo"
+            style="background-color: aliceblue; text-align: center"
           >
-            This is a Road
-          </div>
-
-          <div style="position: absolute; right:10px; top:10px">
-            <el-button type="danger" circle icon="Close" color="aliceblue"
-            @click="CloseRoad"></el-button>
-          </div>
-
-          <div style="height: 30px">拥挤指数</div>
-
-          <el-progress
-            :percentage="crowded"
-            :stroke-width="20"
-            :format="Percentage2Text"
-          />
-
-          <div
-            style="
-              width: 300px;
-              height: 60px;
-              text-align: left;
-              font-size: 15px;
-            "
-          >
-            路况良好，适合通行
-          </div>
-
-          <div
-            v-if="ShowFeedbackFlag"
-            style="width: 300px; height: 200px; text-align: center"
-          >
-            <div style="font-size: 15px; text-align: left; height: 30px">
-              选择实时路况
+            <div
+              style="
+                width: 300px;
+                text-align: center;
+                font-size: 25px;
+                font-weight: bold;
+              "
+            >
+              This is a Road
             </div>
-            <el-button
-              type="primary"
-              @click="FeedBack(1)"
-              style="width: 250px; margin: 5px"
-            >
-              良好
-            </el-button>
-            <el-button
-              type="primary"
-              @click="FeedBack(2)"
-              style="width: 250px; margin: 5px"
-            >
-              适中
-            </el-button>
-            <el-button
-              type="primary"
-              @click="FeedBack(3)"
-              style="width: 250px; margin: 5px"
-            >
-              拥堵
-            </el-button>
-            <el-button
-              type="primary"
-              @click="FeedBack(4)"
-              style="width: 250px; margin: 5px"
-            >
-              严重拥堵
-            </el-button>
 
-            <div style="text-align: right">
-              <el-button type="text" @click="CloseFeedBack" style="width: 50px">
-                返回
+            <div style="position: absolute; right: 10px; top: 10px">
+              <el-button
+                type="danger"
+                circle
+                icon="Close"
+                color="aliceblue"
+                @click="CloseRoad"
+              ></el-button>
+            </div>
+
+            <div style="height: 30px">拥挤指数</div>
+
+            <el-progress
+              :percentage="crowded"
+              :stroke-width="20"
+              :format="Percentage2Text"
+            />
+
+            <div
+              style="
+                width: 300px;
+                height: 60px;
+                text-align: left;
+                font-size: 15px;
+              "
+            >
+              路况良好，适合通行
+            </div>
+
+            <div
+              v-if="ShowFeedbackFlag"
+              style="width: 300px; height: 200px; text-align: center"
+            >
+              <div style="font-size: 15px; text-align: left; height: 30px">
+                选择实时路况
+              </div>
+              <el-button
+                type="primary"
+                @click="FeedBack(1)"
+                style="width: 250px; margin: 5px"
+              >
+                良好
               </el-button>
+              <el-button
+                type="primary"
+                @click="FeedBack(2)"
+                style="width: 250px; margin: 5px"
+              >
+                适中
+              </el-button>
+              <el-button
+                type="primary"
+                @click="FeedBack(3)"
+                style="width: 250px; margin: 5px"
+              >
+                拥堵
+              </el-button>
+              <el-button
+                type="primary"
+                @click="FeedBack(4)"
+                style="width: 250px; margin: 5px"
+              >
+                严重拥堵
+              </el-button>
+
+              <div style="text-align: right">
+                <el-button
+                  type="text"
+                  @click="CloseFeedBack"
+                  style="width: 50px"
+                >
+                  返回
+                </el-button>
+              </div>
             </div>
-          </div>
-          
-          <el-button
-            v-else="ShowFeedBack"
-            type="primary"
-            @click="ShowFeedBack"
-            style="width: 250px; margin: 30px"
-          >
-            反馈实时路况
-          </el-button>
-        </el-aside>
+
+            <el-button
+              v-else="ShowFeedBack"
+              type="primary"
+              @click="ShowFeedBack"
+              style="width: 250px; margin: 30px"
+            >
+              反馈实时路况
+            </el-button>
+          </el-aside>
         </Transition>
       </el-container>
     </el-container>
@@ -113,8 +122,9 @@ import { MapKey, MapSecretKey } from "../config/mapConfig";
 //高德API加载器 安装命令： npm i @amap/amap-jsapi-loader
 import AMapLoader from "@amap/amap-jsapi-loader";
 import { Close } from "@element-plus/icons-vue";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 import { onBeforeMount, onMounted, ref } from "vue";
+import axios from "axios";
 
 export default {
   data() {
@@ -131,9 +141,9 @@ export default {
       this.ShowRoadFlag = true;
       this.RoadInfoId = id;
     },
-    CloseRoad(){
+    CloseRoad() {
       this.ShowRoadFlag = false;
-      this.RoadInfoId = ""
+      this.RoadInfoId = "";
     },
     InitMap() {
       // Map组件本身，下面箭头函数使用
@@ -256,11 +266,26 @@ export default {
       this.ShowFeedbackFlag = false;
     },
     FeedBack(type) {
+      // Post something to backend..
+
+      let senddata = {
+        action: "get_all"
+      }
+
+      axios
+        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       console.log(type);
       ElMessage({
-        message:"反馈成功!",
-        type:'success'
-      })
+        message: "反馈成功!",
+        type: "success",
+      });
       this.CloseFeedBack();
     },
   },

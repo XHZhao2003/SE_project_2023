@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'AppUser',
+    "Road",
     'rest_framework',
     'corsheaders'
 ]
