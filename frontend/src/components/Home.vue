@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%; height: auto;">
-        <el-carousel :interval="3000" height="750px">
-            <el-carousel-item v-for="item in imgList" :key="item.id" height="750px">
+        <el-carousel :interval="3000" height="810px">
+            <el-carousel-item v-for="item in imgList" :key="item.id" height="810px">
                 <img :src="item.idView" style="width: 100%; height: 100%;">
             </el-carousel-item>
         </el-carousel>

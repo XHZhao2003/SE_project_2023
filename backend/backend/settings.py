@@ -133,7 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_HOST = 'smtp.qq.com'
 # EMAIL_HOST_USER = '此处填写你的邮箱地址'
 # EMAIL_HOST_PASSWORD = '此处填写你的邮箱授权码'
-EMAIL_HOST_USER = '2981531232@qq.com'
-EMAIL_HOST_PASSWORD = 'vnqvomskiztmdcfa'
 EMAIL_PORT = 587 #根据邮箱的不同，端口号也不同，网易系邮箱似乎多为25或465
 EMAIL_USE_TLS = True
