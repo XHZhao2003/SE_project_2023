@@ -2,177 +2,72 @@
   <div style="height: 100%; width: 100%">
     <el-container style="height: 100%; width: 100%">
       <el-header style="margin: 0px; padding: 0px" height="100px">
-        <div
-          style="
-            height: 100px;
-            width: 1550px;
-            display: flex;
-            flex-direction: row;
-            flex-grow: 1;
-            align-items: center;
-            justify-content: flex-end;
-            margin: 0px;
-          "
-        >
-          <div style="height: 100px; width: 300px;">
-            <img
-              style="height: 100%; object-fit: contain"
-              src="../assets/ERoad-logo.png"
-            />
+        <div id="header">
+          <div style="height: 100px; width: 300px">
+            <img style="height: 100%; object-fit: contain" src="../assets/ERoad-logo.png" />
           </div>
 
-          <div style="height: 100px; width: 1000px; margin-right: auto; margin-left: auto; display: flex; flex-direction: row ;align-items: center; justify-content: center;">
-            <el-select-v2
-              v-model="value"
-              :options="options"
-              placeholder="Please select"
-              style="width: 240px"
-              multiple
-            />
-            <el-select-v2
-              v-model="value"
-              :options="options"
-              placeholder="Please select"
-              style="width: 240px"
-              multiple
-            />
-            <el-select-v2
-              v-model="value"
-              :options="options"
-              placeholder="Please select"
-              style="width: 240px"
-              multiple
-            />
+          <div id="selector">
+            <el-select-v2 v-model="value" :options="options" placeholder="功能" style="width: 150px" multiple />
+            <el-select-v2 v-model="value" :options="options" placeholder="地点" style="width: 150px" multiple />
+            <el-select-v2 v-model="value" :options="options" placeholder="时间" style="width: 150px" multiple />
             <el-button type="primary" icon="Search">Search</el-button>
           </div>
 
-          <div>
-            <el-button
-              type="primary"
-              icon="Edit"
-              style="width: 120px; height: 50px"
-            >
-              发布
-            </el-button>
-          </div>
-          <div
-            style="
-              height: 100px;
-              width: 200px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            "
-          >
+          <el-button type="primary" icon="Edit" style="width: 120px; height: 50px">
+            发布
+          </el-button>
+
+          <div id="avatar">
             <el-avatar size="large"> User </el-avatar>
           </div>
         </div>
       </el-header>
       <el-container style="margin: 0px; padding: 0px">
-        <el-main style="overflow: hiddens; height: 690px">
+        <el-main style="overflow: hiddens; height: 690px; padding: 0px;">
           <!-- 高德地图容器 -->
           <div id="container"></div>
         </el-main>
         <Transition>
-          <el-aside
-            v-if="ShowRoadFlag"
-            id="asideinfo"
-            style="background-color: aliceblue; text-align: center"
-          >
-            <div
-              style="
-                width: 300px;
-                text-align: center;
-                font-size: 25px;
-                font-weight: bold;
-              "
-            >
-              This is a Road
+          <el-aside v-if="ShowRoadFlag" id="asideinfo">
+            <div id="roadname">{{Roads[RoadInfoId - 1].name}}</div>
+            <div id="closebutton">
+              <el-button type="danger" circle icon="Close" color="aliceblue" @click="CloseRoad" />
+            </div>
+            <div style="height: 30px; text-align: left; padding: auto; font-size: 18px;">拥挤指数</div>
+            <div id="progressbar">
+              <el-progress :percentage="crowding" :stroke-width="25" :show-text="false" />
+            </div>
+            <el-divider />
+            <div id="description">
+              {{Percentage2Text(crowding)}}
             </div>
 
-            <div style="position: absolute; right: 10px; top: 10px">
-              <el-button
-                type="danger"
-                circle
-                icon="Close"
-                color="aliceblue"
-                @click="CloseRoad"
-              ></el-button>
-            </div>
-
-            <div style="height: 30px">拥挤指数</div>
-
-            <el-progress
-              :percentage="crowded"
-              :stroke-width="20"
-              :format="Percentage2Text"
-            />
-
-            <div
-              style="
-                width: 300px;
-                height: 60px;
-                text-align: left;
-                font-size: 15px;
-              "
-            >
-              路况良好，适合通行
-            </div>
-
-            <div
-              v-if="ShowFeedbackFlag"
-              style="width: 300px; height: 200px; text-align: center"
-            >
+            <div v-if="ShowFeedbackFlag" style="width: 300px; height: 200px; text-align: center">
               <div style="font-size: 15px; text-align: left; height: 30px">
                 选择实时路况
               </div>
-              <el-button
-                type="primary"
-                @click="FeedBack(1)"
-                style="width: 250px; margin: 5px"
-                color="#46bc1d"
-              >
+              <el-button id="feedbackbutton" color="#46bc1d" @click="FeedBack(1)">
                 良好
               </el-button>
-              <el-button
-                color="#dfe534"
-                @click="FeedBack(2)"
-                style="width: 250px; margin: 5px"
-              >
+              <el-button id="feedbackbutton" color="#dfe534" @click="FeedBack(2)">
                 适中
               </el-button>
-              <el-button
-                color="#df7401"
-                @click="FeedBack(3)"
-                style="width: 250px; margin: 5px"
-              >
+              <el-button id="feedbackbutton" color="#df7401" @click="FeedBack(3)">
                 拥堵
               </el-button>
-              <el-button
-                color="#ff3333"
-                @click="FeedBack(4)"
-                style="width: 250px; margin: 5px"
-              >
+              <el-button id="feedbackbutton" color="#ff3333" @click="FeedBack(4)">
                 严重拥堵
               </el-button>
 
               <div style="text-align: right">
-                <el-button
-                  type="text"
-                  @click="CloseFeedBack"
-                  style="width: 50px"
-                >
+                <el-button type="text" @click="CloseFeedBack" style="width: 50px">
                   返回
                 </el-button>
               </div>
             </div>
 
-            <el-button
-              v-else="ShowFeedBack"
-              type="primary"
-              @click="ShowFeedBack"
-              style="width: 250px; margin: 30px"
-            >
+            <el-button v-else="ShowFeedBack" type="primary" @click="ShowFeedBack" style="width: 250px; margin: 30px">
               反馈实时路况
             </el-button>
           </el-aside>
@@ -202,17 +97,17 @@ export default {
       ShowFeedbackFlag: false, // 展示反馈按钮
 
       // 用来显示的拥挤指数
-      crowded: 20,
+      crowding: 0,
 
       value: "",
-      options: [{value:1, label:1},{value:2, label:2}],
+      options: [
+        { value: 1, label: 1 },
+        { value: 2, label: 2 },
+      ],
     };
   },
   methods: {
     InitMap() {
-      // Map组件本身，下面箭头函数使用
-      let that = this;
-
       const initMap = new Promise((resolve, reject) => {
         AMapLoader.load({
           key: `${MapKey}`,
@@ -233,7 +128,7 @@ export default {
             map.addControl(scale);
 
             var index = 0;
-            for (var road of that.Roads) {
+            for (var road of this.Roads) {
               var _path = [];
               switch (road.num_of_points) {
                 case 4:
@@ -253,7 +148,11 @@ export default {
                 path: _path,
                 strokeWeight: 6, // 线条宽度，默认为 1
                 strokeColor: "#c2c2c2", // 线条颜色
+                extdata: {
+                  id: index + 1,
+                },
               });
+
               // 先把高亮功能禁用了
               // 高亮会覆盖路况颜色
               // 后面看看怎么禁用这个 on(mouseover) on(mouseoff) 事件
@@ -268,11 +167,13 @@ export default {
               //     strokeColor: "#c2c2c2",
               //   });
               // });
+
               map.add(polyline);
-              AMap.event.addListener(polyline, "click", function () {
-                that.ShowRoad(road.id);
-              });
-              that.RoadPolylines[index] = polyline;
+              polyline.on("click", (event)=>{
+                var _id = event.target.w.extdata.id;
+                this.ShowRoad(_id);
+              })
+              this.RoadPolylines[index] = polyline;
               index++;
             }
 
@@ -357,6 +258,9 @@ export default {
 
     // 点击Road Polyline触发的函数
     ShowRoad(id) {
+      if(this.RoadInfoId !== 0){
+        this.CloseRoad();
+      }
       this.ShowRoadFlag = true;
       this.RoadInfoId = id;
 
@@ -365,13 +269,15 @@ export default {
         action: "get_road_crowding",
         id: id,
       };
-
+      console.log(senddata)
       axios
         .post("http://127.0.0.1:8000/api/Road/", senddata)
         .then((res) => {
           // updata color
           var polyline = this.RoadPolylines[id - 1];
           var color = res.data.color;
+          this.crowding = res.data.crowding;
+          console.log(this.crowding);
           polyline.setOptions({
             strokeColor: color,
           });
@@ -386,10 +292,18 @@ export default {
         strokeColor: "#c2c2c2",
       });
       this.ShowRoadFlag = false;
-      this.RoadInfoId = "";
+      this.RoadInfoId = 0;
     },
     Percentage2Text(percentage) {
-      return "适中";
+      if (percentage <= 20) {
+        return "路况良好，顺畅通行！";
+      } else if (percentage <= 40) {
+        return "路况适中，您可以从这里同行";
+      } else if (percentage <= 60) {
+        return "道路拥挤，您最好选择绕行";
+      } else {
+        return "严重堵塞，您不会想来这里的！";
+      }
     },
     ShowFeedBack() {
       this.ShowFeedbackFlag = true;
@@ -479,6 +393,66 @@ function initPlugins() {
   left: 80%;
   height: 700px;
   width: 20%;
+  background-color: aliceblue;
+  text-align: center;
+}
+#header {
+  height: 100px;
+  width: 1550px;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0px;
+  padding: 0px;
+}
+#selector {
+  height: 100px;
+  width: 1000px;
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+#avatar {
+  height: 100px;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#roadname {
+  width: 300px;
+  height: 60px;
+  text-align: center;
+  padding-top: 10px;
+  font-size: 25px;
+  font-weight: bold;
+}
+#closebutton {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+#progressbar {
+  height: 60px;
+  padding-top: 10px;
+  width: 280px;
+  overflow: hidden;
+}
+#description {
+  width: 300px;
+  height: 60px;
+  text-align: left;
+  font-size: 15px;
+  padding-left: 10px;
+}
+#feedbackbutton {
+  width: 250px;
+  margin: 5px;
 }
 
 /* 侧边栏的动画 */
