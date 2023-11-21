@@ -1,11 +1,75 @@
 <template>
   <div style="height: 100%; width: 100%">
     <el-container style="height: 100%; width: 100%">
-      <el-header style="background-color: white" height="100px">
-        this is a header
+      <el-header style="margin: 0px; padding: 0px" height="100px">
+        <div
+          style="
+            height: 100px;
+            width: 1550px;
+            display: flex;
+            flex-direction: row;
+            flex-grow: 1;
+            align-items: center;
+            justify-content: flex-end;
+            margin: 0px;
+          "
+        >
+          <div style="height: 100px; width: 300px;">
+            <img
+              style="height: 100%; object-fit: contain"
+              src="../assets/ERoad-logo.png"
+            />
+          </div>
+
+          <div style="height: 100px; width: 1000px; margin-right: auto; margin-left: auto; display: flex; flex-direction: row ;align-items: center; justify-content: center;">
+            <el-select-v2
+              v-model="value"
+              :options="options"
+              placeholder="Please select"
+              style="width: 240px"
+              multiple
+            />
+            <el-select-v2
+              v-model="value"
+              :options="options"
+              placeholder="Please select"
+              style="width: 240px"
+              multiple
+            />
+            <el-select-v2
+              v-model="value"
+              :options="options"
+              placeholder="Please select"
+              style="width: 240px"
+              multiple
+            />
+            <el-button type="primary" icon="Search">Search</el-button>
+          </div>
+
+          <div>
+            <el-button
+              type="primary"
+              icon="Edit"
+              style="width: 120px; height: 50px"
+            >
+              发布
+            </el-button>
+          </div>
+          <div
+            style="
+              height: 100px;
+              width: 200px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <el-avatar size="large"> User </el-avatar>
+          </div>
+        </div>
       </el-header>
-      <el-container>
-        <el-main style="overflow: hiddens; height: 700px">
+      <el-container style="margin: 0px; padding: 0px">
+        <el-main style="overflow: hiddens; height: 690px">
           <!-- 高德地图容器 -->
           <div id="container"></div>
         </el-main>
@@ -66,25 +130,26 @@
                 type="primary"
                 @click="FeedBack(1)"
                 style="width: 250px; margin: 5px"
+                color="#46bc1d"
               >
                 良好
               </el-button>
               <el-button
-                type="primary"
+                color="#dfe534"
                 @click="FeedBack(2)"
                 style="width: 250px; margin: 5px"
               >
                 适中
               </el-button>
               <el-button
-                type="primary"
+                color="#df7401"
                 @click="FeedBack(3)"
                 style="width: 250px; margin: 5px"
               >
                 拥堵
               </el-button>
               <el-button
-                type="primary"
+                color="#ff3333"
                 @click="FeedBack(4)"
                 style="width: 250px; margin: 5px"
               >
@@ -121,7 +186,7 @@
 import { MapKey, MapSecretKey } from "../config/mapConfig";
 //高德API加载器 安装命令： npm i @amap/amap-jsapi-loader
 import AMapLoader from "@amap/amap-jsapi-loader";
-import { Close } from "@element-plus/icons-vue";
+import { Close, Edit, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
@@ -129,22 +194,21 @@ import axios from "axios";
 export default {
   data() {
     return {
-      ShowRoadFlag: true,
-      RoadInfoId: "",
-      ShowFeedbackFlag: false,
+      Roads: "",
+      RoadPolylines: [],
 
+      ShowRoadFlag: false, // 侧边展示路况
+      RoadInfoId: 0, // 当前展示的路段id
+      ShowFeedbackFlag: false, // 展示反馈按钮
+
+      // 用来显示的拥挤指数
       crowded: 20,
+
+      value: "",
+      options: [{value:1, label:1},{value:2, label:2}],
     };
   },
   methods: {
-    ShowRoad(id) {
-      this.ShowRoadFlag = true;
-      this.RoadInfoId = id;
-    },
-    CloseRoad() {
-      this.ShowRoadFlag = false;
-      this.RoadInfoId = "";
-    },
     InitMap() {
       // Map组件本身，下面箭头函数使用
       let that = this;
@@ -168,28 +232,49 @@ export default {
             scale = new AMap.Scale();
             map.addControl(scale);
 
-            var polyline1 = new AMap.Polyline({
-              path: [
-                new AMap.LngLat(116.30722, 39.98872),
-                new AMap.LngLat(116.308336, 39.988757),
-              ],
-              strokeWeight: 6, // 线条宽度，默认为 1
-              strokeColor: "rgb(0,128,0)", // 线条颜色
-            });
-            polyline1.on("mouseover", () => {
-              polyline1.setOptions({
-                strokeColor: "rgb(0,255,0)",
+            var index = 0;
+            for (var road of that.Roads) {
+              var _path = [];
+              switch (road.num_of_points) {
+                case 4:
+                  _path.push(new AMap.LngLat(road.point_4x, road.point_4y));
+                // fall through
+                case 3:
+                  _path.push(new AMap.LngLat(road.point_3x, road.point_3y));
+                // fall through
+                case 2:
+                  _path.push(new AMap.LngLat(road.point_2x, road.point_2y));
+                // fall through
+                case 1:
+                  _path.push(new AMap.LngLat(road.point_1x, road.point_1y));
+                  break;
+              }
+              var polyline = new AMap.Polyline({
+                path: _path,
+                strokeWeight: 6, // 线条宽度，默认为 1
+                strokeColor: "#c2c2c2", // 线条颜色
               });
-            });
-            polyline1.on("mouseout", () => {
-              polyline1.setOptions({
-                strokeColor: "rgb(0,128,0)",
+              // 先把高亮功能禁用了
+              // 高亮会覆盖路况颜色
+              // 后面看看怎么禁用这个 on(mouseover) on(mouseoff) 事件
+
+              // polyline.on("mouseover", () => {
+              //   polyline.setOptions({
+              //     strokeColor: "#919191",
+              //   });
+              // });
+              // polyline.on("mouseout", () => {
+              //   polyline.setOptions({
+              //     strokeColor: "#c2c2c2",
+              //   });
+              // });
+              map.add(polyline);
+              AMap.event.addListener(polyline, "click", function () {
+                that.ShowRoad(road.id);
               });
-            });
-            map.add(polyline1);
-            AMap.event.addListener(polyline1, "click", function () {
-              that.ShowRoad(1);
-            });
+              that.RoadPolylines[index] = polyline;
+              index++;
+            }
 
             //bound the region
             var options = {
@@ -256,6 +341,53 @@ export default {
           console.log(err);
         });
     },
+    InitRoad() {
+      let senddata = {
+        action: "get_all",
+      };
+      axios
+        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .then((res) => {
+          this.Roads = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    // 点击Road Polyline触发的函数
+    ShowRoad(id) {
+      this.ShowRoadFlag = true;
+      this.RoadInfoId = id;
+
+      // get crowding from backend
+      let senddata = {
+        action: "get_road_crowding",
+        id: id,
+      };
+
+      axios
+        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .then((res) => {
+          // updata color
+          var polyline = this.RoadPolylines[id - 1];
+          var color = res.data.color;
+          polyline.setOptions({
+            strokeColor: color,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    CloseRoad() {
+      var polyline = this.RoadPolylines[this.RoadInfoId - 1];
+      polyline.setOptions({
+        strokeColor: "#c2c2c2",
+      });
+      this.ShowRoadFlag = false;
+      this.RoadInfoId = "";
+    },
     Percentage2Text(percentage) {
       return "适中";
     },
@@ -267,21 +399,7 @@ export default {
     },
     FeedBack(type) {
       // Post something to backend..
-
-      let senddata = {
-        action: "get_all"
-      }
-
-      axios
-        .post("http://127.0.0.1:8000/api/Road/", senddata)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      console.log(type);
+      this.InitRoad();
       ElMessage({
         message: "反馈成功!",
         type: "success",
@@ -290,6 +408,7 @@ export default {
     },
   },
   mounted: function () {
+    this.InitRoad();
     this.InitMap();
   },
 };
