@@ -138,6 +138,7 @@ defineEmits(["have-account-login"]);
 <script>
 import axios from "axios";
 import { RESOLVE_COMPONENT } from "@vue/compiler-core";
+import JSEncrypt from 'jsencrypt'
 export default {
   data() {
     const confirmValidator = (rule, value, callback)=>{
@@ -178,11 +179,25 @@ export default {
     };
   },
   methods: {
+    $getRsaCode (str){ // 注册方法
+      let pubKey = `-----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwYP+FjArOo0msH6lEcl9
+        jr82dTvBkzMPgtuLnFKECL+86y7YQnWNADFA+avkLVaTJKxf5vkVwvmTv0Vfps2g
+        ZG8ByaEq/JV4y0mevPSe/Jpt8XF/1tL6SfE3ft/0UUfaC7keJp5LLPG9iC7EIlRm
+        H2N2opSVD03yt8lCAAMoSrARk4meCrCU1gydlCb2KNMPNbPa9YkG2vDQEZxHSjoY
+        h5/01FzKEDUtueG6R1CXSb29fJfRVlpy826jiAo8Ljb4rcobUEsOrmv01Wxk8/OF
+        TI8fnNmwDRAqv06uiXgeAB0qVMtvktBm0gl0aTQy+jPetrlbjRf/vwizgEy2/oF8
+        bQIDAQAB-----END PUBLIC KEY-----`;// ES6 模板字符串 引用 rsa 公钥
+      let encryptStr = new JSEncrypt();
+      encryptStr.setPublicKey(pubKey); // 设置 加密公钥
+      let data = encryptStr.encrypt(str.toString());  // 进行加密
+      return data;
+    },
     EventRegister() {
       let senddata = {
         action: "register",
         username: this.user.username,
-        password: this.user.password,
+        password: this.$getRsaCode(this.user.password),
         email:this.user.email,
         confirm:this.user.confirmpassword,
         verify_code:this.user.verifycode

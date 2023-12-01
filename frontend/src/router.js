@@ -21,7 +21,7 @@ const router=createRouter({
             component: Home
         },
         {
-            path:"/HellowWorld",
+            path:"/HelloWorld",
             component: HelloWorld
         },
         {

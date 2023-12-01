@@ -71,7 +71,7 @@ defineEmits(["no-account-register"]);
 
 <script>
 import axios from 'axios'
-
+import JSEncrypt from 'jsencrypt'
 export default {
   data() {
     return {
@@ -86,22 +86,40 @@ export default {
     };
   },
   methods: {
+    $getRsaCode (str){ // 注册方法
+      let pubKey = `-----BEGIN PUBLIC KEY-----
+        MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwYP+FjArOo0msH6lEcl9
+        jr82dTvBkzMPgtuLnFKECL+86y7YQnWNADFA+avkLVaTJKxf5vkVwvmTv0Vfps2g
+        ZG8ByaEq/JV4y0mevPSe/Jpt8XF/1tL6SfE3ft/0UUfaC7keJp5LLPG9iC7EIlRm
+        H2N2opSVD03yt8lCAAMoSrARk4meCrCU1gydlCb2KNMPNbPa9YkG2vDQEZxHSjoY
+        h5/01FzKEDUtueG6R1CXSb29fJfRVlpy826jiAo8Ljb4rcobUEsOrmv01Wxk8/OF
+        TI8fnNmwDRAqv06uiXgeAB0qVMtvktBm0gl0aTQy+jPetrlbjRf/vwizgEy2/oF8
+        bQIDAQAB-----END PUBLIC KEY-----`;// ES6 模板字符串 引用 rsa 公钥
+      let encryptStr = new JSEncrypt();
+      encryptStr.setPublicKey(pubKey); // 设置 加密公钥
+      let data = encryptStr.encrypt(str.toString());  // 进行加密
+      return data;
+    },
     EventLogin() {
       const that = this;
       this.$refs.loginRef.validate((valid) => {
         // 表单自身rules的规则检查
         if(valid) {
+          console.log(this.user.username);
+          console.log(this.user.password);
+          
+          console.log(this.$getRsaCode(this.user.password));
           let senddata = {
             action:"login",
             username: this.user.username,
-            password: this.user.password
+            password: this.$getRsaCode(this.user.password)
           }
           axios
             .post("http://127.0.0.1:8000/api/AppUser/", senddata)
             .then((res) => {
               console.log(res);
               if(res.data.status==200){
-                this.$router.push("/Map");
+                this.$router.push("/HelloWorld");
               }
               else{
                 alert("用户名或密码错误");

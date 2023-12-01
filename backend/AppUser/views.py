@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.core.mail import send_mail
 from AppUser.verify import generate_code
+from AppUser.rsa_crypt import *
 
 
 class AppUserView(APIView):
@@ -88,6 +89,7 @@ class AppUserView(APIView):
     def register(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        password = decrypt_data(password)
         email = request.data.get('email')
         confirm = request.data.get('confirm')
         verify_code = request.data.get('verify_code')
@@ -135,6 +137,7 @@ class AppUserView(APIView):
     def login(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        password = decrypt_data(password)
         # 如果username中含有@，则按照email进行登录
         if '@' in username:
             users = AppUser.objects.filter(email=username)
