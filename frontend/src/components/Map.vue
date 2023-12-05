@@ -1,30 +1,11 @@
 <template>
-  <div style="height: 100%; width: 100%">
-    <el-container style="height: 100%; width: 100%">
-      <el-header style="margin: 0px; padding: 0px" height="100px">
-        <div id="header">
-          <div style="height: 100px; width: 300px">
-            <img style="height: 100%; object-fit: contain" src="../assets/ERoad-logo.png" />
-          </div>
-
-          <div id="selector">
-            <el-select-v2 v-model="value" :options="options" placeholder="功能" style="width: 150px" multiple />
-            <el-select-v2 v-model="value" :options="options" placeholder="地点" style="width: 150px" multiple />
-            <el-select-v2 v-model="value" :options="options" placeholder="时间" style="width: 150px" multiple />
-            <el-button type="primary" icon="Search">Search</el-button>
-          </div>
-
-          <el-button type="primary" icon="Edit" style="width: 120px; height: 50px">
-            发布
-          </el-button>
-
-          <div id="avatar">
-            <el-avatar size="large"> User </el-avatar>
-          </div>
-        </div>
+  <div>
+    <el-container>
+      <el-header height="90px">
+        <MapHeader/>
       </el-header>
-      <el-container style="margin: 0px; padding: 0px">
-        <el-main style="overflow: hiddens; height: 690px; padding: 0px;">
+      <el-container>
+        <el-main style="overflow: hiddens; height: 700px; width: auto;margin:0px; padding: 0px;">
           <!-- 高德地图容器 -->
           <div id="container"></div>
         </el-main>
@@ -85,6 +66,7 @@ import { Close, Edit, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
+import MapHeader from "./MapHeader.vue";
 
 export default {
   data() {
@@ -153,26 +135,11 @@ export default {
                 },
               });
 
-              // 先把高亮功能禁用了
-              // 高亮会覆盖路况颜色
-              // 后面看看怎么禁用这个 on(mouseover) on(mouseoff) 事件
-
-              // polyline.on("mouseover", () => {
-              //   polyline.setOptions({
-              //     strokeColor: "#919191",
-              //   });
-              // });
-              // polyline.on("mouseout", () => {
-              //   polyline.setOptions({
-              //     strokeColor: "#c2c2c2",
-              //   });
-              // });
-
               map.add(polyline);
-              polyline.on("click", (event)=>{
+              polyline.on("click", (event) => {
                 var _id = event.target.w.extdata.id;
                 this.ShowRoad(_id);
-              })
+              });
               this.RoadPolylines[index] = polyline;
               index++;
             }
@@ -234,13 +201,13 @@ export default {
           });
       });
 
-      initMap
-        .then((ok) => {
-          initPlugins();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // initMap
+      //   .then((ok) => {
+      //     initPlugins();
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
     InitRoad() {
       let senddata = {
@@ -258,7 +225,7 @@ export default {
 
     // 点击Road Polyline触发的函数
     ShowRoad(id) {
-      if(this.RoadInfoId !== 0){
+      if (this.RoadInfoId !== 0) {
         this.CloseRoad();
       }
       this.ShowRoadFlag = true;
@@ -269,7 +236,7 @@ export default {
         action: "get_road_crowding",
         id: id,
       };
-      console.log(senddata)
+      console.log(senddata);
       axios
         .post("http://127.0.0.1:8000/api/Road/", senddata)
         .then((res) => {
@@ -321,15 +288,15 @@ export default {
       this.CloseFeedBack();
     },
   },
+  components:{
+    MapHeader
+  },
   mounted: function () {
     this.InitRoad();
     this.InitMap();
   },
 };
 
-// window._AMapSecurityConfig = {
-//   securityJsCode: `${MapSecretKey}`,
-// };
 
 //工具条显示隐藏
 function toolbarView(s) {
@@ -368,14 +335,13 @@ function initPlugins() {
 
 <style scoped>
 #container {
-  position: fixed;
-  top: 110px;
-  left: 10px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  width: 1540px;
-  height: 700px;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
 }
 #controller {
   position: absolute;
@@ -389,40 +355,12 @@ function initPlugins() {
 #asideinfo {
   position: absolute;
   z-index: 99;
-  top: 110px;
+  top: 95px;
   left: 80%;
   height: 700px;
   width: 20%;
   background-color: aliceblue;
   text-align: center;
-}
-#header {
-  height: 100px;
-  width: 1550px;
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  align-items: center;
-  justify-content: flex-end;
-  margin: 0px;
-  padding: 0px;
-}
-#selector {
-  height: 100px;
-  width: 1000px;
-  margin-right: auto;
-  margin-left: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-#avatar {
-  height: 100px;
-  width: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 #roadname {
   width: 300px;
