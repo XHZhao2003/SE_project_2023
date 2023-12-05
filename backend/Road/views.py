@@ -10,6 +10,7 @@ from django.conf import settings
 
 from django.shortcuts import render
 
+
 class RoadError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -17,18 +18,18 @@ class RoadError(Exception):
     def __str__(self):
         return self.msg
 
+
 class RoadView(APIView):
-    
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
         action = request.data.get("action")
-        if(action == 'get_all'):
+        if action == 'get_all':
             return self.get_all(request)
-        elif(action == 'get'):
-            return self.get(request)
-        elif(action == 'feedback_crowding'):
-            return self.feedback(request)
+        elif(action == 'get_road_crowding'):
+            return self.get_road_crowding(request)
+        elif(action == 'feedback_road_crowding'):
+            return self.feedback_road_crowding(request)
         else:
             return Response(data={
                 "msg": str(RoadError("action error")),
@@ -55,7 +56,9 @@ class RoadView(APIView):
 
                 Points = Point.objects.filter(road=road)
                 if len(Points) != road.num_of_points:
-                    raise RoadError("num_of_points of road " + str(road.number) + " is not equal to the number of points in database")
+                    raise RoadError("num_of_points of road " + str(road.number) +
+                                    " is not equal to the number of points in database")
+
                 points.append([(point.x, point.y) for point in Points])
 
             return Response(data={
@@ -73,7 +76,7 @@ class RoadView(APIView):
             })
 
     @csrf_exempt
-    def get(self, request):
+    def get_road_crowding(self, request):
         '''
         根据前端传来的路的名字（序号），返回该路的所有信息
         '''
@@ -81,55 +84,62 @@ class RoadView(APIView):
             number = request.data.get("id")
             road = Road.objects.get(number=number)
             feedback = road.feedback
+            #print('crowd: ', road.crowd, 'feedback: ', feedback)
+            feedback_std = self.crowd2feedback((int)(road.crowd))
+
+            if feedback != feedback_std:
+                road.feedback = feedback_std
+                road.save()
+                feedback = road.feedback
+
             return Response(data={
-                "name": number,
-                "base_color": road.base_color,
-                "hover_color": road.hover_color,
-                "points_loc": points_loc,
+                "id": number,
                 "feedback": feedback,
                 "status": status.HTTP_200_OK
             })
-        
+
         except Exception as e:
             return Response(data={
                 "msg": str(e),
                 "status": status.HTTP_400_BAD_REQUEST
             })
 
-    def get_feedback(crowd):
+    def crowd2feedback(self, crowd):
+        '''
+        根据路的拥挤程度，返回路的反馈信息
+        '''
+        print(crowd)
         if crowd <= 30:
-            return "smooth"
+            return 1
         elif crowd <= 100:
-            return "crowded"
+            return 2
+        elif crowd <= 150:
+            return 3
         else:
-            return "blocked"
+            return 4
 
     @csrf_exempt
-    def feedback(self, request):
+    def feedback_road_crowding(self, request):
         '''
         根据前端传来的路的名字（序号）和点的序号，返回该点的反馈信息
         '''
         try:
-            number = request.data.get("number")
-            point_x = request.data.get("point_x")
-            point_y = request.data.get("point_y")
-            info = request.data.get("info")
+            number = request.data.get("id")
+            info = request.data.get("road_crowding")
             road = Road.objects.get(number=number)
             if road is None:
                 raise RoadError("road " + str(number) + " does not exist")
-            
-            point = Point.objects.get(road=road, x=point_x, y=point_y)
-            if point is None:
-                raise RoadError("point " + str(point_x) + " " + str(point_y) + " does not exist")
 
-            if point.crowd < 10000 and info == 'crowded':
-                point.crowd += 1
-            elif point.crowd > 0 and info == 'smooth' :
-                point.crowd -= 1
+            road.crowd += (int)(info)
+            if road.crowd < -30:
+                road.crowd = -30
+            elif road.crowd > 250:
+                road.crowd = 250
 
-            point.feedback = self.get_feedback((int)(point.crowd))
+            road.feedback = self.crowd2feedback(road.crowd)
 
-            point.save(update_fields=['crowd', 'feedback'])
+            road.save()
+
             return Response(data={
                 "msg": "feedback success",
                 "status": status.HTTP_200_OK
@@ -138,12 +148,11 @@ class RoadView(APIView):
         except Exception as e:
             return Response(data={
                 "msg": str(e),
-                "extra": str(point.crowd)+str(type(point.crowd)),
                 "status": status.HTTP_400_BAD_REQUEST
             })
 
 
-# todo : 这里的api调用暂时不被启用，后续根据实际情况考虑，可以结合用户权限维护管理员功能
+# todo : 这里的api调用暂时未被启用，后续根据实际情况考虑，可以结合用户权限维护管理员功能
 class AdminView(APIView):
     '''
     管理员创建路的信息
@@ -167,7 +176,7 @@ class AdminView(APIView):
         '''
         try:
             number = request.data.get("number")
-            #若该路已存在，则返回错误信息
+            # 若该路已存在，则返回错误信息
             # if(Road.objects.filter(number=number)):
             #     raise RoadError("road already exists")
 
@@ -191,7 +200,7 @@ class AdminView(APIView):
             return Response(data={
                 "status": status.HTTP_200_OK
             })
-        
+
         except Exception as e:
             return Response(data={
                 "error": str(e),
@@ -204,7 +213,7 @@ class AdminView(APIView):
         '''
         try:
             number = request.data.get("number")
-            #若该路不存在，则返回错误信息
+            # 若该路不存在，则返回错误信息
             if(not Road.objects.filter(number=number)):
                 raise RoadError("road not exists")
 
@@ -228,7 +237,7 @@ class AdminView(APIView):
             return Response(data={
                 "status": status.HTTP_200_OK
             })
-        
+
         except Exception as e:
             return Response(data={
                 "error": str(e),

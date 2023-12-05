@@ -9,7 +9,7 @@ class Road(models.Model):
     base_color = models.IntegerField()
     hover_color = models.IntegerField()
     crowd = models.IntegerField()
-    feedback = models.CharField(max_length=100)
+    feedback = models.IntegerField() # 1,2,3,4
 
 
 class Point(models.Model):
