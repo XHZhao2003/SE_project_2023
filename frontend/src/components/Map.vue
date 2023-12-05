@@ -1,30 +1,11 @@
 <template>
-  <div style="height: 100%; width: 100%">
-    <el-container style="height: 100%; width: 100%">
-      <el-header style="margin: 0px; padding: 0px" height="100px">
-        <div id="header">
-          <div style="height: 100px; width: 300px">
-            <img style="height: 100%; object-fit: contain" src="../assets/ERoad-logo.png" />
-          </div>
-
-          <div id="selector">
-            <el-select-v2 v-model="value" :options="options" placeholder="功能" style="width: 150px" multiple />
-            <el-select-v2 v-model="value" :options="options" placeholder="地点" style="width: 150px" multiple />
-            <el-select-v2 v-model="value" :options="options" placeholder="时间" style="width: 150px" multiple />
-            <el-button type="primary" icon="Search">Search</el-button>
-          </div>
-
-          <el-button type="primary" icon="Edit" style="width: 120px; height: 50px">
-            发布
-          </el-button>
-
-          <div id="avatar">
-            <el-avatar size="large"> User </el-avatar>
-          </div>
-        </div>
+  <div>
+    <el-container>
+      <el-header height="90px">
+        <MapHeader />
       </el-header>
-      <el-container style="margin: 0px; padding: 0px">
-        <el-main style="overflow: hiddens; height: 690px; padding: 0px;">
+      <el-container>
+        <el-main style="overflow: hiddens; height: 700px; width: auto;margin:0px; padding: 0px;">
           <!-- 高德地图容器 -->
           <div id="container"></div>
         </el-main>
@@ -46,12 +27,13 @@ import { Close, Edit, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
-import Road_side from "./map_road_side.vue";
 import Roadsidebar from "./Roadsidebar.vue"
+import MapHeader from "./MapHeader.vue";
 
 export default {
   components:{
     Roadsidebar,
+    MapHeader,
   },
   data() {
     return {
