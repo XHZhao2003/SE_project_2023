@@ -2,60 +2,21 @@
   <div>
     <el-container>
       <el-header height="90px">
-        <MapHeader/>
+        <MapHeader />
       </el-header>
       <el-container>
         <el-main style="overflow: hiddens; height: 700px; width: auto;margin:0px; padding: 0px;">
           <!-- 高德地图容器 -->
           <div id="container"></div>
         </el-main>
-        <Transition>
-          <el-aside v-if="ShowRoadFlag" id="asideinfo">
-            <div id="roadname">{{Roads[RoadInfoId - 1].name}}</div>
-            <div id="closebutton">
-              <el-button type="danger" circle icon="Close" color="aliceblue" @click="CloseRoad" />
-            </div>
-            <div style="height: 30px; text-align: left; padding: auto; font-size: 18px;">拥挤指数</div>
-            <div id="progressbar">
-              <el-progress :percentage="crowding" :stroke-width="25" :show-text="false" />
-            </div>
-            <el-divider />
-            <div id="description">
-              {{Percentage2Text(crowding)}}
-            </div>
-
-            <div v-if="ShowFeedbackFlag" style="width: 300px; height: 200px; text-align: center">
-              <div style="font-size: 15px; text-align: left; height: 30px">
-                选择实时路况
-              </div>
-              <el-button id="feedbackbutton" color="#46bc1d" @click="FeedBack(1)">
-                良好
-              </el-button>
-              <el-button id="feedbackbutton" color="#dfe534" @click="FeedBack(2)">
-                适中
-              </el-button>
-              <el-button id="feedbackbutton" color="#df7401" @click="FeedBack(3)">
-                拥堵
-              </el-button>
-              <el-button id="feedbackbutton" color="#ff3333" @click="FeedBack(4)">
-                严重拥堵
-              </el-button>
-
-              <div style="text-align: right">
-                <el-button type="text" @click="CloseFeedBack" style="width: 50px">
-                  返回
-                </el-button>
-              </div>
-            </div>
-
-            <el-button v-else="ShowFeedBack" type="primary" @click="ShowFeedBack" style="width: 250px; margin: 30px">
-              反馈实时路况
-            </el-button>
-          </el-aside>
-        </Transition>
       </el-container>
     </el-container>
   </div>
+
+  <el-aside v-if="ShowRoadFlag" id="asideinfo" >
+    <Roadsidebar :str="Roads[RoadInfoId - 1].name" :num="crowding" @close-road="CloseRoad"/>
+  </el-aside>
+
 </template>
   
 <script>
@@ -66,9 +27,14 @@ import { Close, Edit, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
+import Roadsidebar from "./Roadsidebar.vue"
 import MapHeader from "./MapHeader.vue";
 
 export default {
+  components:{
+    Roadsidebar,
+    MapHeader,
+  },
   data() {
     return {
       Roads: "",
@@ -76,7 +42,6 @@ export default {
 
       ShowRoadFlag: false, // 侧边展示路况
       RoadInfoId: 0, // 当前展示的路段id
-      ShowFeedbackFlag: false, // 展示反馈按钮
 
       // 用来显示的拥挤指数
       crowding: 0,
@@ -223,70 +188,53 @@ export default {
         });
     },
 
-    // 点击Road Polyline触发的函数
-    ShowRoad(id) {
-      if (this.RoadInfoId !== 0) {
-        this.CloseRoad();
-      }
-      this.ShowRoadFlag = true;
-      this.RoadInfoId = id;
+      // 点击Road Polyline触发的函数
+      ShowRoad(id) {
+        if(this.RoadInfoId !== 0){
+          this.CloseRoad();
+        }
+        this.ShowRoadFlag = true;
+        this.RoadInfoId = id;
 
-      // get crowding from backend
-      let senddata = {
-        action: "get_road_crowding",
-        id: id,
-      };
-      console.log(senddata);
-      axios
-        .post("http://127.0.0.1:8000/api/Road/", senddata)
-        .then((res) => {
-          // updata color
-          var polyline = this.RoadPolylines[id - 1];
-          var color = res.data.color;
-          this.crowding = res.data.crowding;
-          console.log(this.crowding);
-          polyline.setOptions({
-            strokeColor: color,
+        // get crowding from backend
+        let senddata = {
+          action: "get_road_crowding",
+          id: id,
+        };
+        console.log(senddata)
+        axios
+          .post("http://127.0.0.1:8000/api/Road/", senddata)
+          .then((res) => {
+            // updata color
+            var polyline = this.RoadPolylines[id - 1];
+            var color = res.data.color;
+            this.crowding = res.data.crowding;
+            console.log(this.crowding);
+            polyline.setOptions({
+              strokeColor: color,
+            });
+          })
+          .catch((error) => {
+            console.log(error);
           });
-        })
-        .catch((error) => {
-          console.log(error);
+      },
+      CloseRoad() {
+        var polyline = this.RoadPolylines[this.RoadInfoId - 1];
+        polyline.setOptions({
+          strokeColor: "#c2c2c2",
         });
-    },
-    CloseRoad() {
-      var polyline = this.RoadPolylines[this.RoadInfoId - 1];
-      polyline.setOptions({
-        strokeColor: "#c2c2c2",
-      });
-      this.ShowRoadFlag = false;
-      this.RoadInfoId = 0;
-    },
-    Percentage2Text(percentage) {
-      if (percentage <= 20) {
-        return "路况良好，顺畅通行！";
-      } else if (percentage <= 40) {
-        return "路况适中，您可以从这里同行";
-      } else if (percentage <= 60) {
-        return "道路拥挤，您最好选择绕行";
-      } else {
-        return "严重堵塞，您不会想来这里的！";
-      }
-    },
-    ShowFeedBack() {
-      this.ShowFeedbackFlag = true;
-    },
-    CloseFeedBack() {
-      this.ShowFeedbackFlag = false;
-    },
-    FeedBack(type) {
-      // Post something to backend..
-      this.InitRoad();
-      ElMessage({
-        message: "反馈成功!",
-        type: "success",
-      });
-      this.CloseFeedBack();
-    },
+        this.ShowRoadFlag = false;
+        this.RoadInfoId = 0;
+      },
+      FeedBack(type) {
+        // Post something to backend..
+        this.InitRoad();
+        ElMessage({
+          message: "反馈成功!",
+          type: "success",
+        });
+        this.CloseFeedBack();
+      },
   },
   components:{
     MapHeader
@@ -343,15 +291,6 @@ function initPlugins() {
   margin: 0px;
   padding: 0px;
 }
-#controller {
-  position: absolute;
-  z-index: 99;
-  top: 20px;
-  left: 100px;
-  background: rgb(255, 255, 255);
-  list-style-type: none;
-  width: 120px;
-}
 #asideinfo {
   position: absolute;
   z-index: 99;
@@ -362,35 +301,33 @@ function initPlugins() {
   background-color: aliceblue;
   text-align: center;
 }
-#roadname {
-  width: 300px;
-  height: 60px;
-  text-align: center;
-  padding-top: 10px;
-  font-size: 25px;
-  font-weight: bold;
+#header {
+  height: 100px;
+  width: 1550px;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0px;
+  padding: 0px;
 }
-#closebutton {
-  position: absolute;
-  right: 10px;
-  top: 10px;
+#selector {
+  height: 100px;
+  width: 1000px;
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
-#progressbar {
-  height: 60px;
-  padding-top: 10px;
-  width: 280px;
-  overflow: hidden;
-}
-#description {
-  width: 300px;
-  height: 60px;
-  text-align: left;
-  font-size: 15px;
-  padding-left: 10px;
-}
-#feedbackbutton {
-  width: 250px;
-  margin: 5px;
+#avatar {
+  height: 100px;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 侧边栏的动画 */
