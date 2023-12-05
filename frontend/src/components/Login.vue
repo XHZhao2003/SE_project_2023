@@ -119,6 +119,7 @@ export default {
             .then((res) => {
               console.log(res);
               if(res.data.status==200){
+                localStorage.setItem("loginFlag", "true");
                 this.$router.push("/HelloWorld");
               }
               else{

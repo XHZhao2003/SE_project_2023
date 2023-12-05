@@ -100,26 +100,11 @@ export default {
                 },
               });
 
-              // 先把高亮功能禁用了
-              // 高亮会覆盖路况颜色
-              // 后面看看怎么禁用这个 on(mouseover) on(mouseoff) 事件
-
-              // polyline.on("mouseover", () => {
-              //   polyline.setOptions({
-              //     strokeColor: "#919191",
-              //   });
-              // });
-              // polyline.on("mouseout", () => {
-              //   polyline.setOptions({
-              //     strokeColor: "#c2c2c2",
-              //   });
-              // });
-
               map.add(polyline);
-              polyline.on("click", (event)=>{
+              polyline.on("click", (event) => {
                 var _id = event.target.w.extdata.id;
                 this.ShowRoad(_id);
-              })
+              });
               this.RoadPolylines[index] = polyline;
               index++;
             }
@@ -181,13 +166,13 @@ export default {
           });
       });
 
-      initMap
-        .then((ok) => {
-          initPlugins();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // initMap
+      //   .then((ok) => {
+      //     initPlugins();
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
     InitRoad() {
       let senddata = {
@@ -251,15 +236,15 @@ export default {
         this.CloseFeedBack();
       },
   },
+  components:{
+    MapHeader
+  },
   mounted: function () {
     this.InitRoad();
     this.InitMap();
   },
 };
 
-// window._AMapSecurityConfig = {
-//   securityJsCode: `${MapSecretKey}`,
-// };
 
 //工具条显示隐藏
 function toolbarView(s) {
@@ -298,19 +283,18 @@ function initPlugins() {
 
 <style scoped>
 #container {
-  position: fixed;
-  top: 110px;
-  left: 10px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  width: 1540px;
-  height: 700px;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
 }
 #asideinfo {
   position: absolute;
   z-index: 99;
-  top: 110px;
+  top: 95px;
   left: 80%;
   height: 700px;
   width: 20%;

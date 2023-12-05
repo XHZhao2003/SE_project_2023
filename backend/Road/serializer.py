@@ -1,26 +1,14 @@
 from rest_framework import serializers
 from Road.models import Road
+from Road.models import Point
 
 
 class RoadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Road
-        fields = [
-            "id",
-            "name",
-            "num_of_points",
-            "point_1x",
-            "point_1y",
-            "point_2x",
-            "point_2y",
-            "point_3x",
-            "point_3y",
-            "point_4x",
-            "point_4y",
-            "base_color",
-            "hover_color",
-            "feedback_1",
-            "feedback_2",
-            "feedback_3",
-            "feedback_4"
-        ]
+        fields = '__all__'
+
+class PointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Point
+        fields = '__all__'
