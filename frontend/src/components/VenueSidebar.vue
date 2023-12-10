@@ -4,7 +4,7 @@
       <el-button type="danger" circle icon="Close" color="aliceblue" @click="close"/>
   </div>
   
- 
+
 
   <div  style="width: 300px; height: 200px; text-align: center">
     <div id="description"> {{ str }} </div>
