@@ -40,7 +40,6 @@ const router=createRouter({
 router.beforeEach((to, from, next)=>{
     if(to.meta.loginFlag == "true"){
         // 需要登录状态的页面
-        console.log(localStorage.getItem("loginFlag"))
         if(localStorage.getItem("loginFlag") == "true"){
             next()
         }
