@@ -17,7 +17,7 @@
     <Roadsidebar :str="Roads[RoadInfoId - 1].name" :num="crowding" @close-road="CloseRoad"/>
   </el-aside>
   <el-aside v-if="ShowVenueFlag" id="asideinfo" >
-    <VenueSidebar :str="Jiayuan" @close-venue="CloseVenue"/>
+    <VenueSidebar @close-venue="CloseVenue"/>
   </el-aside>
 
 </template>
@@ -49,7 +49,6 @@ export default {
       RoadInfoId: 0, // 当前展示的路段id
 
       ShowVenueFlag: false,
-      //VenueInfoId: 0,
 
       // 用来显示的拥挤指数
       crowding: 0,
@@ -116,22 +115,13 @@ export default {
               this.RoadPolylines[index] = polyline;
               index++;
             }
-            
-            //added 1 marker
+
             var marker_jiayuan = new AMap.Marker({
               position: [116.308148,39.988473],
-            })
+            });
             map.add(marker_jiayuan);
-            marker_jiayuan.on("click", (event) => {
-                //var _id = event.target.w.extdata.id;
-                this.ShowVenue();
-            });
-            /*var info_jiayuan = new AMap.InfoWindow({
-              content: '家园食堂 <br> 营业时间：1000-2200',
-              offset: new AMap.Pixel(2, -20)
-            });
-            AMap.event.addListener(marker_jiayuan, 'click', function () {
-              info_jiayuan.open(map, [116.308148,39.988473]);
+            /*map.event.addListener(marker_jiayuan, 'click', function() {
+              ShowVenueFlag= true
             });*/
 
             //bound the region
@@ -213,6 +203,12 @@ export default {
         });
     },
 
+    InitVenue(){
+      map.event.addListener(marker_jiayuan, 'click', function(){
+        this.ShowVenue()
+      });
+    },
+
       // 点击Road Polyline触发的函数
       ShowRoad(id) {
         if(this.RoadInfoId !== 0){
@@ -243,6 +239,9 @@ export default {
             console.log(error);
           });
       },
+      ShowVenue(){
+        this.ShowVenueFlag = true;
+      },
       CloseRoad() {
         var polyline = this.RoadPolylines[this.RoadInfoId - 1];
         polyline.setOptions({
@@ -260,47 +259,15 @@ export default {
         });
         this.CloseFeedBack();
       },
-
-      ShowVenue() {
-        /*if(this.VenueInfoId !== 0){
-          this.CloseVenue();
-        }*/
-        this.ShowVenueFlag = true;
-        //this.VenueInfoId = id;
-
-        // get info from backend
-        /*let senddata = {
-          action: "get_venue_crowding",
-          id: id,
-        };
-        console.log(senddata)
-        axios
-          .post("http://127.0.0.1:8000/api/Road/", senddata)
-          .then((res) => {
-            // updata color
-            /*var polyline = this.RoadPolylines[id - 1];
-            var color = res.data.color;
-            this.crowding = res.data.crowding;
-            console.log(this.crowding);
-            polyline.setOptions({
-              strokeColor: color,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-          });*/
-      },
-      CloseVenue() {
-        this.ShowVenueFlag = false;
-        //this.VenueInfoId = 0;
-      },
   },
   components:{
-    MapHeader
+    MapHeader,
+    VenueSidebar
   },
   mounted: function () {
     this.InitRoad();
     this.InitMap();
+    this.InitVenue();
   },
 };
 
