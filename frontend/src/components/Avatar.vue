@@ -4,7 +4,7 @@
       <el-avatar size="large"> User </el-avatar>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item @click="ExitLogin">Action 1</el-dropdown-item>
+          <el-dropdown-item @click="ExitLogin">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -20,28 +20,25 @@ export default {
   },
   methods: {
     ExitLogin() {
-      ElMessageBox.confirm(
-        "确认离开当前页面",
-        "退出登录",
-        {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
-          type: "warning",
-          size: 500
-        }
-      )
+      ElMessageBox.confirm("确认离开当前页面", "退出登录", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        type: "warning",
+        size: 500,
+      })
         .then(() => {
           ElMessage({
             type: "success",
             message: "退出登录",
           });
-          this.$router.push('/Home')
+          this.$router.push("/Home");
         })
         .catch(() => {});
     },
   },
 };
 </script>
+
 
 
 
