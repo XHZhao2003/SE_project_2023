@@ -1,71 +1,131 @@
 <template>
-    <div id="roadname">{{ str }}</div>
-    <div id="closebutton">
-        <el-button type="danger" circle icon="Close" color="aliceblue" @click="close"/>
+  <div id="roadname">{{ name }}</div>
+  <div id="closebutton">
+    <el-button type="danger" circle icon="Close" color="aliceblue" @click="close" />
+  </div>
+  <div style="height: 30px; text-align: left; margin-left: 10px; font-size: 18px;">拥挤指数</div>
+  <div id="progressbar">
+    <el-progress :percentage="crowding" :stroke-width="25" :show-text="false" />
+  </div>
+  <el-divider />
+  <div id="description">
+    {{Percentage2Text(crowding)}}
+  </div>
+
+  <div v-if="ShowFeedBackFlag" style="width: 300px; height: 200px; text-align: center">
+    <div style="font-size: 15px; text-align: left; height: 30px">
+      选择实时路况
     </div>
-    <div style="height: 30px; text-align: left; padding: auto; font-size: 18px;">拥挤指数</div>
-    <div id="progressbar">
-        <el-progress :percentage=num :stroke-width="25" :show-text="false" :color="color" />
+    <div class="feedbackbutton">
+      <el-button style="width: 250px;" color="#46bc1d" @click="FeedBack(1)">
+        良好
+      </el-button>
     </div>
-    <el-divider />
-    <div id="description">
-        {{Percentage2Text(num)}}
+    <div class="feedbackbutton">
+      <el-button style="width: 250px;" color="#dfe534" @click="FeedBack(2)">
+        适中
+      </el-button>
+    </div>
+    <div class="feedbackbutton">
+      <el-button style="width: 250px;" color="#df7401" @click="FeedBack(3)">
+        拥堵
+      </el-button>
+    </div>
+    <div class="feedbackbutton">
+      <el-button style="width: 250px;" color="#ff3333" @click="FeedBack(4)">
+        严重拥堵
+      </el-button>
     </div>
 
-    <div  style="width: 300px; height: 200px; text-align: center">
-        <div style="font-size: 15px; text-align: left; height: 30px">
-            选择实时路况,感谢您的反馈！
-        </div>
-        <el-button id="feedbackbutton" color="#46bc1d" @click="FeedBack(1)">
-            良好
-        </el-button>
-        <el-button id="feedbackbutton" color="#dfe534" @click="FeedBack(2)">
-            适中
-        </el-button>
-        <el-button id="feedbackbutton" color="#df7401" @click="FeedBack(3)">
-            拥堵
-        </el-button>
-        <el-button id="feedbackbutton" color="#ff3333" @click="FeedBack(4)">
-            严重拥堵
-        </el-button>
+    <div style="text-align: right">
+      <el-button type="text" @click="CloseFeedBack" style="width: 50px">
+        返回
+      </el-button>
     </div>
+  </div>
+  <el-button v-else="ShowFeedBackFlag" type="primary" @click="ShowFeedBack" style="width: 250px; margin: 30px">
+    反馈实时路况
+  </el-button>
 </template>
 
 <script>
-export default{
-    name: "Roadsidebar",
-    emits: ['close-road'],
-    props:{
-        str: String,
-        num: Number,
+import { ElMessage } from "element-plus";
+import axios from "axios";
+
+export default {
+  name: "Roadsidebar",
+  emits: ["close-road"],
+  props: {
+    name: String,
+    crowding: Number,
+    road_id: Number,
+  },
+  data() {
+    return {
+      ShowFeedBackFlag: false,
+    };
+  },
+  methods: {
+    Percentage2Text(percentage) {
+      if (percentage <= 20) {
+        return "路况良好，顺畅通行！";
+      } else if (percentage <= 40) {
+        return "路况适中，您可以从这里通行";
+      } else if (percentage <= 60) {
+        return "道路拥挤，您最好选择绕行";
+      } else {
+        return "严重堵塞，您不会想来这里的！";
+      }
     },
-    methods:{
-        Percentage2Text(percentage) {
-            if (percentage <= 20) {
-                return "路况良好，顺畅通行！";
-            } else if (percentage <= 40) {
-                return "路况适中，您可以从这里通行";
-            } else if (percentage <= 60) {
-                return "道路拥挤，您最好选择绕行";
-            } else {
-                return "严重堵塞，您不会想来这里的！";
-            }
-        },
-        color(percentage){
-            if(percentage <= 25){
-                return "#46bc1d";
-            }else if(percentage <= 50){
-                return "#dfe534";
-            }else if(percentage <= 75){
-                return "#df7401";
-            }else{
-                return "#ff3333";
-            }
-        },
-        close(){
-            this.$emit('close-road')
-        }
-    }
+    color(percentage) {
+      if (percentage <= 25) {
+        return "#46bc1d";
+      } else if (percentage <= 50) {
+        return "#dfe534";
+      } else if (percentage <= 75) {
+        return "#df7401";
+      } else {
+        return "#ff3333";
+      }
+    },
+    close() {
+      this.$emit("close-road");
+    },
+    ShowFeedBack() {
+      this.ShowFeedBackFlag = true;
+      console.log("here");
+    },
+    CloseFeedBack() {
+      this.ShowFeedBackFlag = false;
+    },
+    FeedBack(type) {
+      // Post something to backend..
+      var senddata = {
+        action: "feedback_road_crowding",
+        id: this.road_id,
+        road_crowding: type - 4,
+      };
+      console.log(senddata);
+      axios
+        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .then((res) => {
+          console.log(res)
+          var status = res.data.msg
+          if (status === "feedback success") {
+            ElMessage({
+              message: "反馈成功!",
+              type: "success",
+            });
+            this.CloseFeedBack();
+          } else {
+            console.log(res.data.msg);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
 };
 </script>
 
@@ -89,9 +149,10 @@ export default{
   width: 280px;
   overflow: hidden;
 }
-#feedbackbutton {
+.feedbackbutton {
+  margin-left: 30px;
   width: 250px;
-  margin: 5px;
+  margin-bottom: 10px;
 }
 #description {
   width: 300px;

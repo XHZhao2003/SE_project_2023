@@ -42,6 +42,7 @@ class RoadView(APIView):
         返回所有路径的信息
         '''
         try:
+            name = []
             number = []
             points = []
             base_color = []
@@ -49,6 +50,7 @@ class RoadView(APIView):
             feedback = []
             all_roads = Road.objects.all()
             for road in all_roads:
+                name.append(road.name)
                 number.append(road.number)
                 base_color.append(road.base_color)
                 hover_color.append(road.hover_color)
@@ -62,6 +64,7 @@ class RoadView(APIView):
                 points.append([(point.x, point.y) for point in Points])
 
             return Response(data={
+                "name": name,
                 "id": number,
                 "base_color": base_color,
                 "hover_color": hover_color,

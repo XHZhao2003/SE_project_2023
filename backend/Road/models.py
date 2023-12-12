@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Road(models.Model):
+    name = models.CharField(max_length=20, unique=True, default="Road")
     number = models.IntegerField(default=-1)
     # 前端定义折线的节点数量，规定最大不超过4
     num_of_points = models.IntegerField()

@@ -13,9 +13,11 @@
     </el-container>
   </div>
 
-  <el-aside v-if="ShowRoadFlag" id="asideinfo" >
-    <Roadsidebar :str="Roads[RoadInfoId - 1].name" :num="crowding" @close-road="CloseRoad"/>
-  </el-aside>
+  <transition>
+    <el-aside v-if="ShowRoadFlag" id="asideinfo">
+      <Roadsidebar :name="Roads.name[RoadInfoId - 1]" :crowding="crowding" :road_id="RoadInfoId" @close-road="CloseRoad" />
+    </el-aside>
+  </transition>
 
 </template>
   
@@ -27,14 +29,10 @@ import { Close, Edit, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
-import Roadsidebar from "./Roadsidebar.vue"
+import Roadsidebar from "./Roadsidebar.vue";
 import MapHeader from "./MapHeader.vue";
 
 export default {
-  components:{
-    Roadsidebar,
-    MapHeader,
-  },
   data() {
     return {
       Roads: "",
@@ -75,21 +73,17 @@ export default {
             map.addControl(scale);
 
             var index = 0;
-            for (var road of this.Roads) {
+            var num_of_road = this.Roads.id.length;
+            for (var i = 0; i < num_of_road; i++) {
               var _path = [];
-              switch (road.num_of_points) {
-                case 4:
-                  _path.push(new AMap.LngLat(road.point_4x, road.point_4y));
-                // fall through
-                case 3:
-                  _path.push(new AMap.LngLat(road.point_3x, road.point_3y));
-                // fall through
-                case 2:
-                  _path.push(new AMap.LngLat(road.point_2x, road.point_2y));
-                // fall through
-                case 1:
-                  _path.push(new AMap.LngLat(road.point_1x, road.point_1y));
-                  break;
+              var num_of_point = this.Roads.points[i].length;
+              for (var j = 0; j < num_of_point; j++) {
+                _path.push(
+                  new AMap.LngLat(
+                    this.Roads.points[i][j][0],
+                    this.Roads.points[i][j][1]
+                  )
+                );
               }
               var polyline = new AMap.Polyline({
                 path: _path,
@@ -188,63 +182,67 @@ export default {
         });
     },
 
-      // 点击Road Polyline触发的函数
-      ShowRoad(id) {
-        if(this.RoadInfoId !== 0){
-          this.CloseRoad();
-        }
-        this.ShowRoadFlag = true;
-        this.RoadInfoId = id;
+    // 点击Road Polyline触发的函数
+    ShowRoad(id) {
+      if (this.RoadInfoId !== 0) {
+        this.CloseRoad();
+      }
+      this.ShowRoadFlag = true;
+      this.RoadInfoId = id;
 
-        // get crowding from backend
-        let senddata = {
-          action: "get_road_crowding",
-          id: id,
-        };
-        console.log(senddata)
-        axios
-          .post("http://127.0.0.1:8000/api/Road/", senddata)
-          .then((res) => {
-            // updata color
-            var polyline = this.RoadPolylines[id - 1];
-            var color = res.data.color;
-            this.crowding = res.data.crowding;
-            console.log(this.crowding);
-            polyline.setOptions({
-              strokeColor: color,
-            });
-          })
-          .catch((error) => {
-            console.log(error);
+      // get crowding from backend
+      let senddata = {
+        action: "get_road_crowding",
+        id: id,
+      };
+      axios
+        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .then((res) => {
+          // updata color
+          var polyline = this.RoadPolylines[id - 1];
+          this.crowding = res.data.feedback;
+          var color = this.Crowd2Color(this.crowding);
+          polyline.setOptions({
+            strokeColor: color,
           });
-      },
-      CloseRoad() {
-        var polyline = this.RoadPolylines[this.RoadInfoId - 1];
-        polyline.setOptions({
-          strokeColor: "#c2c2c2",
+        })
+        .catch((error) => {
+          console.log(error);
         });
-        this.ShowRoadFlag = false;
-        this.RoadInfoId = 0;
-      },
-      FeedBack(type) {
-        // Post something to backend..
-        this.InitRoad();
-        ElMessage({
-          message: "反馈成功!",
-          type: "success",
-        });
-        this.CloseFeedBack();
-      },
+    },
+    CloseRoad() {
+      var polyline = this.RoadPolylines[this.RoadInfoId - 1];
+      polyline.setOptions({
+        strokeColor: "#c2c2c2",
+      });
+      this.ShowRoadFlag = false;
+      this.RoadInfoId = 0;
+    },
+    FeedBack(type) {
+      // Post something to backend..
+      this.InitRoad();
+      ElMessage({
+        message: "反馈成功!",
+        type: "success",
+      });
+      this.CloseFeedBack();
+    },
+    Crowd2Color(crowding) {
+      if (crowding === 4) return "#ff3333";
+      else if (crowding === 3) return "#df7401";
+      else if (crowding === 2) return "#dfe534";
+      else return "#46bc1d";
+    },
   },
-  components:{
-    MapHeader
+  components: {
+    MapHeader,
+    Roadsidebar,
   },
   mounted: function () {
     this.InitRoad();
     this.InitMap();
   },
 };
-
 
 //工具条显示隐藏
 function toolbarView(s) {
