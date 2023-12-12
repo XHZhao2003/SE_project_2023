@@ -169,7 +169,7 @@ export default {
                           { validator:confirmValidator, 
                             message:"两次输入密码不一致", trigger:["blur", "change"]}],
         email:[{ required:true, message:"请输入PKU邮箱", trigger:"blur",},
-               { pattern: /([0-9]{9,11})+(@pku.edu.cn|@stu.pku.edu.cn)$/, 
+               { pattern: /([0-9a-zA-Z]{1,50})+(@pku.edu.cn|@stu.pku.edu.cn)$/, 
                  message:"PKU邮箱格式错误", trigger:["blur", "change"]
 }],
       },
