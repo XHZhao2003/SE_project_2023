@@ -37,18 +37,9 @@ export default {
     return {
       Roads: "",
       RoadPolylines: [],
-
       ShowRoadFlag: false, // 侧边展示路况
       RoadInfoId: 0, // 当前展示的路段id
-
-      // 用来显示的拥挤指数
-      crowding: 0,
-
-      value: "",
-      options: [
-        { value: 1, label: 1 },
-        { value: 2, label: 2 },
-      ],
+      crowding: 0,// 用来显示的拥挤指数
     };
   },
   methods: {

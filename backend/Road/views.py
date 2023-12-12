@@ -111,7 +111,6 @@ class RoadView(APIView):
         '''
         根据路的拥挤程度，返回路的反馈信息
         '''
-        print(crowd)
         if crowd <= 30:
             return 1
         elif crowd <= 100:
@@ -133,6 +132,7 @@ class RoadView(APIView):
             if road is None:
                 raise RoadError("road " + str(number) + " does not exist")
 
+            print("------------", road.crowd)
             road.crowd += (int)(info)
             if road.crowd < -30:
                 road.crowd = -30
@@ -140,7 +140,6 @@ class RoadView(APIView):
                 road.crowd = 250
 
             road.feedback = self.crowd2feedback(road.crowd)
-
             road.save()
 
             return Response(data={

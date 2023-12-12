@@ -5,11 +5,11 @@
   </div>
   <div style="height: 30px; text-align: left; margin-left: 10px; font-size: 18px;">拥挤指数</div>
   <div id="progressbar">
-    <el-progress :percentage="crowding" :stroke-width="25" :show-text="false" />
+    <el-progress :percentage="Crowding2Percentage(crowding)" :stroke-width="25" :show-text="false"/>
   </div>
   <el-divider />
   <div id="description">
-    {{Percentage2Text(crowding)}}
+    {{Percentage2Text(Crowding2Percentage(crowding))}}
   </div>
 
   <div v-if="ShowFeedBackFlag" style="width: 300px; height: 200px; text-align: center">
@@ -66,6 +66,9 @@ export default {
     };
   },
   methods: {
+    Crowding2Percentage(crowding){
+      return crowding * 20
+    },
     Percentage2Text(percentage) {
       if (percentage <= 20) {
         return "路况良好，顺畅通行！";
@@ -78,11 +81,11 @@ export default {
       }
     },
     color(percentage) {
-      if (percentage <= 25) {
+      if (percentage <= 20) {
         return "#46bc1d";
-      } else if (percentage <= 50) {
+      } else if (percentage <= 40) {
         return "#dfe534";
-      } else if (percentage <= 75) {
+      } else if (percentage <= 60) {
         return "#df7401";
       } else {
         return "#ff3333";
@@ -103,7 +106,7 @@ export default {
       var senddata = {
         action: "feedback_road_crowding",
         id: this.road_id,
-        road_crowding: type - 4,
+        road_crowding: type - 2,
       };
       console.log(senddata);
       axios
