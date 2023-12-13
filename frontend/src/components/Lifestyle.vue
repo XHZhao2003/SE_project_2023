@@ -32,7 +32,7 @@ import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
 import Roadsidebar from "./Roadsidebar.vue"
 import MapHeader from "./MapHeader.vue"
-import VenueSidebar from "./VenueSidebar.vue";
+import VenueSidebar from "./Venuesidebar.vue";
 
 export default {
   components:{

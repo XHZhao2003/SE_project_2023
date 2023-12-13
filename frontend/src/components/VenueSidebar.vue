@@ -1,35 +1,29 @@
 <template>
-  <div id="venuename" style="height: 60px; text-align: center; padding-top: 10px; font-size: 30px; font-weight: bold;">家园食堂</div>
-  <div id="closebutton">
-      <el-button type="danger" circle icon="Close" color="aliceblue" @click="close"/>
+  <div id="venuename" style="height: 60px; text-align: center; padding-top: 10px; font-size: 30px; font-weight: bold;">
+    {{this.name}}
   </div>
-  
+  <div id="closebutton">
+    <el-button type="danger" circle icon="Close" color="aliceblue" @click="close" />
+  </div>
+
   <div id="opening-hours">
-    <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
-      营业时间
-    </div>
-      一层：早餐 0700 - 1000 午餐 1100 - 1300 晚餐 1700 - 1900 <br>
-      二层：午餐 1100 - 1300 晚餐 1700 - 1900 <br>
-      三层与四层：1000 - 2300 
+    <el-scrollbar height="100px">
+      <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
+        营业时间
+      </div>
+      <div style="text-align: left; margin-left: 30px;">
+        {{this.opening_hours}}
+      </div>
+    </el-scrollbar>
   </div>
 
   <div id="Description">
     <div style="font-size: 20px; text-align: left; padding-top: 10px; height: 30px; font-weight: bold; padding-left: 10px;">
-      地点简介
+      简介
     </div>
-      北京大学燕园校区内最大的食堂
-  </div>
-
-  <div id="Comments">
-    <div style="font-size: 20px; text-align: left; padding-top: 10px; height: 30px; font-weight: bold; padding-left: 10px;">
-      评论区
+    <div style="text-align: left; margin-left: 30px;">
+      {{this.description}}
     </div>
-    <el-skeleton :rows="6" animated />
-    <el-input
-      placeholder="Please input"
-      v-model="input"
-      clearable>
-    </el-input>
   </div>
 
   <div id="tags" style="padding-top: 10px">
@@ -38,44 +32,127 @@
     <el-tag>0700 - 2300</el-tag>
   </div>
 
+  <div id="conmentBox">
+    <div style="font-size: 20px; text-align: left; padding-top: 10px; height: 30px; font-weight: bold; padding-left: 10px;">
+      评论区
+    </div>
+    <el-scrollbar height="250px">
+      <div v-for="comment in this.comments" class="commentItem">
+        <div style="text-align: left; margin-left: 20px;">
+          {{comment.username}}
+        </div>
+        <el-scrollbar height="80px">
+          <div style="text-align: left; margin-left: 30px;">
+            {{comment.content}}
+          </div>
+        </el-scrollbar>
+      </div>
+    </el-scrollbar>
+  </div>
+
+  <el-button type="primary" style="width: 200px; margin-top: 30px;">
+    发送评论
+  </el-button>
+
 </template>
 
 <script>
+import { ElTag, ElInput, ElSkeleton } from "element-plus";
+import { ref } from "vue";
+import axios from "axios";
 
-export default{
-  name: "VenueSidebar",
-  emits: ['close-venue'],
-  props:{
-      str: String,
-      num: Number,
+export default {
+  name: "Venuesidebar",
+  emits: ["close-venue"],
+  props: {
+    id: Number,
   },
   data() {
     return {
-      input: ''
-    }
-  }
+      name: "",
+      opening_hours: "",
+      description: "",
+      comments: [
+        {
+          content: "暂时没有评论",
+          username: "",
+          timestamp: "",
+        },
+      ],
+      tags: "",
+      input: "",
+    };
+  },
+  methods: {
+    getVenue(id) {
+      var senddata = {
+        action: "get_location_by_id",
+        id: id,
+      };
+      console.log(senddata);
+      axios
+        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .then((res) => {
+          console.log(res);
+          // update info
+          this.name = res.data.name;
+          this.opening_hours = res.data.opening_hours;
+          this.description = res.data.description;
+          if (res.data.comments.length > 0) {
+            this.comments = res.data.comments;
+          } else {
+            this.comments = [
+              {
+                content: "暂时没有评论",
+                username: "",
+                timestamp: "",
+              },
+            ];
+          }
+          this.tags = res.data.tags;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    close() {
+      this.$emit("close-venue");
+    },
+  },
 };
 </script>
 
 <style>
 #venuename {
-width: 300px;
-height: 60px;
-text-align: center;
-padding-top: 10px;
-font-size: 30px;
-font-weight: bold;
+  width: 300px;
+  height: 60px;
+  text-align: center;
+  padding-top: 10px;
+  font-size: 30px;
+  font-weight: bold;
 }
 #closebutton {
-position: absolute;
-right: 10px;
-top: 10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 
 #description {
-  font-size: 20px; 
-  text-align: left; 
-  padding-top: 10px; 
-  height: 30px; 
+  font-size: 20px;
+  text-align: left;
+  padding-top: 10px;
+  height: 30px;
+}
+#commentBox {
+  height: 150px;
+}
+.commentItem {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 3px 3px lightgray;
+  background-color: blanchedalmond;
 }
 </style>

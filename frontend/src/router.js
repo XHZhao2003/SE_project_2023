@@ -3,7 +3,7 @@ import Map from './components/Map.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import Home from './components/Home.vue'
 import Lifestyle from './components/Lifestyle.vue'
-import Login from './components/Login.vue'
+import Venuesidebar from './components/Venuesidebar.vue'
 
 const router=createRouter({
     history:createWebHashHistory(),
@@ -31,8 +31,8 @@ const router=createRouter({
             }
         },
         {
-            path:"/Lifestyle",
-            component: Lifestyle
+            path:"/test",
+            component: Venuesidebar
         },
     ]
 });

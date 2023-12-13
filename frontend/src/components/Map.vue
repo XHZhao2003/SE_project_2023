@@ -14,8 +14,14 @@
   </div>
 
   <transition>
-    <el-aside v-if="ShowRoadFlag" id="asideinfo">
+    <el-aside v-if="ShowRoadFlag" class="asideinfo">
       <Roadsidebar :name="Roads.name[RoadInfoId - 1]" :crowding="crowding" :road_id="RoadInfoId" @close-road="CloseRoad" />
+    </el-aside>
+  </transition>
+  <transition>
+    <el-aside v-show="showVenueFlag" class="asideinfo">
+      <!-- 这里设计成让子组件请求数据，v-if在mount阶段组件还不存在，也获取不到ref，改成v-show -->
+      <Venuesidebar ref="venueComponent" :id="venueInfoId" @close-venue="CloseVenue" />
     </el-aside>
   </transition>
 
@@ -27,19 +33,23 @@ import { MapKey, MapSecretKey } from "../config/mapConfig";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import { Close, Edit, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import { onBeforeMount, onMounted, ref } from "vue";
 import axios from "axios";
+import { ref } from "vue";
 import Roadsidebar from "./Roadsidebar.vue";
 import MapHeader from "./MapHeader.vue";
+import Venuesidebar from "./Venuesidebar.vue";
 
 export default {
   data() {
     return {
       Roads: "",
+      venues: "",
       RoadPolylines: [],
       ShowRoadFlag: false, // 侧边展示路况
+      showVenueFlag: false, // 侧边展示生活指南
       RoadInfoId: 0, // 当前展示的路段id
-      crowding: 0,// 用来显示的拥挤指数
+      venueInfoId: 0, // 当前展示地点数据结构
+      crowding: 0, // 用来显示的拥挤指数
     };
   },
   methods: {
@@ -63,7 +73,7 @@ export default {
             scale = new AMap.Scale();
             map.addControl(scale);
 
-            var index = 0;
+            // add roads
             var num_of_road = this.Roads.id.length;
             for (var i = 0; i < num_of_road; i++) {
               var _path = [];
@@ -81,7 +91,7 @@ export default {
                 strokeWeight: 6, // 线条宽度，默认为 1
                 strokeColor: "#c2c2c2", // 线条颜色
                 extdata: {
-                  id: index + 1,
+                  id: i + 1,
                 },
               });
 
@@ -90,8 +100,23 @@ export default {
                 var _id = event.target.w.extdata.id;
                 this.ShowRoad(_id);
               });
-              this.RoadPolylines[index] = polyline;
-              index++;
+              this.RoadPolylines[i] = polyline;
+            }
+
+            // add venues
+            var num_of_venues = this.venues.length;
+            for (var i = 0; i < num_of_venues; i++) {
+              var marker = new AMap.Marker({
+                position: [this.venues[i].x, this.venues[i].y],
+                extdata: {
+                  id: i + 1,
+                },
+              });
+              marker.on("click", (event) => {
+                var _id = event.target.w.extdata.id;
+                this.ShowVenue(_id);
+              });
+              map.add(marker);
             }
 
             //bound the region
@@ -172,11 +197,26 @@ export default {
           console.log(error);
         });
     },
-
+    InitVenue() {
+      let senddata = {
+        action: "get_all_locations",
+      };
+      axios
+        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .then((res) => {
+          this.venues = res.data.locations;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     // 点击Road Polyline触发的函数
     ShowRoad(id) {
       if (this.RoadInfoId !== 0) {
         this.CloseRoad();
+      }
+      if (this.VenueInfoId != 0) {
+        this.CloseVenue();
       }
       this.ShowRoadFlag = true;
       this.RoadInfoId = id;
@@ -209,6 +249,22 @@ export default {
       this.ShowRoadFlag = false;
       this.RoadInfoId = 0;
     },
+    ShowVenue(id) {
+      if (this.RoadInfoId != 0) {
+        this.CloseRoad();
+      }
+      if (this.venueInfoId != 0) {
+        this.CloseVenue();
+      }
+      this.showVenueFlag = true;
+      this.venueInfoId = id
+      // 子组件自己获取数据
+      this.$refs.venueComponent.getVenue(id)
+    },
+    CloseVenue() {
+      this.showVenueFlag = false;
+      this.venueInfoId = 0;
+    },
     FeedBack(type) {
       // Post something to backend..
       this.InitRoad();
@@ -228,9 +284,11 @@ export default {
   components: {
     MapHeader,
     Roadsidebar,
+    Venuesidebar,
   },
   mounted: function () {
     this.InitRoad();
+    this.InitVenue();
     this.InitMap();
   },
 };
@@ -280,12 +338,12 @@ function initPlugins() {
   margin: 0px;
   padding: 0px;
 }
-#asideinfo {
+.asideinfo {
   position: absolute;
   z-index: 99;
   top: 95px;
   left: 80%;
-  height: 700px;
+  height: 705px;
   width: 20%;
   background-color: aliceblue;
   text-align: center;

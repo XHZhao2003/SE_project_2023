@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from models import Location, Comment, TagFunction, TagPlace, TagTime
+from .models import Location, Comment, TagFunction, TagPlace, TagTime
 from rest_framework import status
 
 
@@ -23,6 +23,8 @@ class LocationView(APIView):
         action = request.data.get("action")
         if action == 'get_location_by_id':
             return self.get_location_by_id(request)
+        elif action == "get_all_locations":
+            return self.get_all_locations(request)
         else:
             return Response(data={
                 "msg": str(LocationError("action error")),
@@ -60,12 +62,41 @@ class LocationView(APIView):
                 tags3_.append(tag3.number)
                 
             return Response(data={
+                "id": location.number,
                 "name": location.name,
+                "x": location.x,
+                "y": location.y,
                 "opening_hours": location.opening_hours,
                 "description": location.description,
-                "comments": comments,
+                "comments": comments_,
                 "tags": [tags1_, tags2_, tags3_],
                 "status": status.HTTP_200_OK
+            })
+        except Exception as e:
+            return Response(data={
+                "msg": str(e),
+                "status": status.HTTP_400_BAD_REQUEST
+            })
+            
+    @csrf_exempt
+    def get_all_locations(self, request):
+        '''
+        返回指定地点的信息
+        '''
+        try:
+            locations = Location.objects.all()
+            locations_ = []
+            for location in locations:
+                location_dict = {
+                    "id": location.number,
+                    "name": location.name,
+                    "x": location.x,
+                    "y": location.y,
+                }
+                locations_.append(location_dict)
+                
+            return Response(data={
+                "locations": locations_
             })
         except Exception as e:
             return Response(data={

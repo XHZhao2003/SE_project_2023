@@ -6,6 +6,11 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = '__all__'
+        
+class CommentSerialzier(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
 
 class TagFunctionSerializer(serializers.ModelSerializer):
     class Meta:

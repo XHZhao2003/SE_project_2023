@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include("rest_framework.urls")),
     path('api/AppUser/', include('AppUser.urls', namespace='AppUser')),
-    path('api/Road/', include('Road.urls', namespace="Road"))
+    path('api/Road/', include('Road.urls', namespace="Road")),
+    path('api/Location/', include('Location.urls', namespace="Location"))
 ]
