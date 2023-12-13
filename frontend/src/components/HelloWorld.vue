@@ -2,16 +2,16 @@
     
     <div class="wrapper">
         <div id="building">
-            <project-name>
+            <div id="project-name">
                 <p>
                     Choose what you want!
                 </p>
-            </project-name>
-            <start>
-                <button @click="Start">路况地图</button>
-                <button @click="Goto">生活指南</button>
+            </div>
+            <div id="start">
+                <button id="button-start" @click="Start">路况地图</button>
+                <button id="button-goto" @click="Goto">生活指南</button>
                 <router-view></router-view>
-            </start>
+            </div>
         </div>
     </div>
 
@@ -44,13 +44,13 @@ export default{
   background-position: center center;
   opacity: 1;
 }
-div project-name{
+#project-name{
     margin:50px auto;
     font-size:100px;
     text-align: center;
     color: darkviolet;
 }
-div start button{
+#start button{
     width:50%;
     margin:30px auto;
     height:65px;
