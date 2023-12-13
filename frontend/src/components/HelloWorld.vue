@@ -25,7 +25,7 @@ export default{
             this.$router.push('/Map')
         },
         Goto(){
-            this.$router.push('/Lifestyle')
+            this.$router.push('/Map')
         }
     }
 }

@@ -93,7 +93,6 @@ export default {
       axios
         .post("http://127.0.0.1:8000/api/Location/", senddata)
         .then((res) => {
-          console.log(res);
           // update info
           this.name = res.data.name;
           this.opening_hours = res.data.opening_hours;

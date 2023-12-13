@@ -29,11 +29,7 @@ const router=createRouter({
             meta:{
                 loginFlag:"true"
             }
-        },
-        {
-            path:"/test",
-            component: Venuesidebar
-        },
+        }
     ]
 });
 
