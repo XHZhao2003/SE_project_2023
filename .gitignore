@@ -2,3 +2,4 @@ private.md
 .idea/
 backend/db.sqlite3
 backend/logs/*
+backend/*/__pycache__/*
