@@ -6,9 +6,6 @@ class Road(models.Model):
     number = models.IntegerField(default=-1)
     # 前端定义折线的节点数量，规定最大不超过4
     num_of_points = models.IntegerField()
-    # 0xRGB定义成一个整数，前端解析
-    base_color = models.IntegerField()
-    hover_color = models.IntegerField()
     crowd = models.IntegerField()
     feedback = models.IntegerField() # 1,2,3,4
 
