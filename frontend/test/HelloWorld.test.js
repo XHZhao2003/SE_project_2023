@@ -1,7 +1,15 @@
 import { mount } from '@vue/test-utils'
-import { test } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import HelloWorld from '../src/components/HelloWorld.vue'
 
-test("mount HelloWorld", () => {
-  const wrapper = mount(HelloWorld)
+
+
+const wrapper = mount(HelloWorld)
+const vm = wrapper.vm
+  
+describe("Testing HelloWorld.vue", () => {
+    it("Render two buttons", () => {
+      expect(wrapper.find('#button-start').isVisible()).toBe(true)
+      expect(wrapper.find('#button-goto').isVisible()).toBe(true)
+    })
 })
