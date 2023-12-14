@@ -47,6 +47,7 @@ router.beforeEach((to, from, next)=>{
         if(loginFlag == "true"){
             if(from.path == '/Map'){
                 localStorage.setItem("loginFlag", "false")
+                localStorage.setItem("userName", "")
                 next()
             }
             else{

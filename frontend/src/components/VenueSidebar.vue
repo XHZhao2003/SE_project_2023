@@ -50,9 +50,21 @@
     </el-scrollbar>
   </div>
 
-  <el-button type="primary" style="width: 200px; margin-top: 30px;">
+  <el-button type="primary" style="width: 200px; margin-top: 30px;" @click="showCommentDialog = true">
     发送评论
   </el-button>
+
+  <el-dialog v-model="showCommentDialog">
+    <div style="text-align: center; margin-bottom: 10px; font-size: 25px; font-weight: bold;">
+      {{this.name}}
+    </div>
+    <el-input v-model="input" :rows="10" type="textarea" placeholder="Please input" style="margin-bottom: 10px;" />
+
+    <div>
+      <el-button type="primary" style="width: 150px;" @click="SendComment">发送</el-button>
+    </div>
+
+  </el-dialog>
 
 </template>
 
@@ -70,6 +82,7 @@ export default {
   data() {
     return {
       name: "",
+      id: 0,
       opening_hours: "",
       description: "",
       comments: [
@@ -81,6 +94,7 @@ export default {
       ],
       tags: "",
       input: "",
+      showCommentDialog: false,
     };
   },
   methods: {
@@ -93,11 +107,12 @@ export default {
         .post("http://127.0.0.1:8000/api/Location/", senddata)
         .then((res) => {
           // update info
-          this.name = res.data.name;
-          this.opening_hours = res.data.opening_hours;
-          this.description = res.data.description;
+          this.name = res.data.name
+          this.id = res.data.id
+          this.opening_hours = res.data.opening_hours
+          this.description = res.data.description
           if (res.data.comments.length > 0) {
-            this.comments = res.data.comments;
+            this.comments = res.data.comments
           } else {
             this.comments = [
               {
@@ -112,6 +127,23 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    async SendComment() {
+      var senddata = {
+        action: "post_comment",
+        id: this.id,
+        content: this.input,
+        username: localStorage.getItem("username"),
+      };
+      await axios
+        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      this.showCommentDialog = false
     },
     close() {
       this.$emit("close-venue");

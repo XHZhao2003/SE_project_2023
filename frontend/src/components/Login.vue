@@ -120,6 +120,7 @@ export default {
               console.log(res);
               if(res.data.status==200){
                 localStorage.setItem("loginFlag", "true");
+                localStorage.setItem("username", this.user.username)
                 this.$router.push("/HelloWorld");
               }
               else{
@@ -129,7 +130,6 @@ export default {
             .catch((error) => {
               console.log(error);
             });
-          
         }
       });
     },

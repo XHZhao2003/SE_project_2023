@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dropdown>
-      <el-avatar size="large"> User </el-avatar>
+      <el-avatar size="large" style="font-size: 30px;"> {{nameInAvatar}} </el-avatar>
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item @click="ExitLogin">退出登录</el-dropdown-item>
@@ -16,7 +16,10 @@ import { ElMessage, ElMessageBox } from "element-plus";
 
 export default {
   data() {
-    return {};
+    return {
+      username: "",
+      nameInAvatar: "User"
+    };
   },
   methods: {
     ExitLogin() {
@@ -36,6 +39,15 @@ export default {
         .catch(() => {});
     },
   },
+  mounted: function(){
+    this.username = localStorage.getItem("username")
+    if(this.username[0] >= 'a' && this.username[0] <= 'z'){
+      this.nameInAvatar = this.username[0].toUpperCase()
+    }
+    else if(this.username[0] >= 'A' && this.username[0] <= 'Z'){
+      this.nameInAvatar = this.username[0]
+    }
+  }
 };
 </script>
 
