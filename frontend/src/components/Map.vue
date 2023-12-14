@@ -2,7 +2,12 @@
   <div>
     <el-container>
       <el-header height="90px">
-        <MapHeader ref="mapheader" @search="Search" />
+        <MapHeader ref="mapheader" 
+        @search="Search"
+        @showRoadLayer="ShowRoadLayer"
+        @showVenueLayer="ShowVenueLayer"
+        @closeRoadLayer="CloseRoadLayer"
+        @closeVenueLayer="CloseVenueLayer" />
       </el-header>
       <el-container>
         <el-main style="overflow: hiddens; height: 700px; width: auto;margin:0px; padding: 0px;">
@@ -45,6 +50,7 @@ export default {
       Roads: "",
       venues: "",
       RoadPolylines: [],
+      venueMarkers: [],
       ShowRoadFlag: false, // 侧边展示路况
       showVenueFlag: false, // 侧边展示生活指南
       RoadInfoId: 0, // 当前展示的路段id
@@ -101,6 +107,7 @@ export default {
                 this.ShowRoad(_id);
               });
               this.RoadPolylines[i] = polyline;
+              this.RoadPolylines[i].hide()
             }
 
             // add venues
@@ -117,6 +124,8 @@ export default {
                 this.ShowVenue(_id);
               });
               map.add(marker);
+              this.venueMarkers[i] = marker
+              this.venueMarkers[i].hide()
             }
 
             //bound the region
@@ -288,6 +297,26 @@ export default {
         this.showVenueFlag = true;
       }
     },
+    ShowRoadLayer(){
+      for(var roadPolyline of this.RoadPolylines){
+        roadPolyline.show()
+      }
+    },
+    CloseRoadLayer(){
+      for(var roadPolyline of this.RoadPolylines){
+        roadPolyline.hide()
+      }
+    },
+    ShowVenueLayer(){
+      for(var venueMarker of this.venueMarkers){
+        venueMarker.show()
+      }
+    },
+    CloseVenueLayer(){
+      for(var venueMarker of this.venueMarkers){
+        venueMarker.hide()
+      }
+    }
   },
   components: {
     MapHeader,
