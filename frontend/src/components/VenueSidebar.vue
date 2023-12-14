@@ -84,13 +84,12 @@ export default {
     };
   },
   methods: {
-    getVenue(id) {
+    async getVenue(id) {
       var senddata = {
         action: "get_location_by_id",
         id: id,
       };
-      console.log(senddata);
-      axios
+      await axios
         .post("http://127.0.0.1:8000/api/Location/", senddata)
         .then((res) => {
           // update info

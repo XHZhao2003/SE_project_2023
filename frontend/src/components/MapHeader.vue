@@ -6,7 +6,7 @@
     <div id="selector">
       <el-select-v2 v-model="value1" :options="options1" placeholder="功能" style="width: 180px" multiple collapse-tags="true" clearable="true"/>
       <el-select-v2 v-model="value2" :options="options2" placeholder="地点" style="width: 200px" multiple collapse-tags="true" clearable="true"/>
-      <el-select-v2 v-model="value3" :options="options3" placeholder="时间" style="width: 230px" multiple collapse-tags="true" clearable="true" item-height="30"/>
+      <el-select-v2 v-model="value3" :options="options3" placeholder="时间" style="width: 230px" multiple collapse-tags="true" clearable="true" item-height="30" />
       <el-button type="primary" icon="Search" @click="handleChange">Search</el-button>
     </div>
 

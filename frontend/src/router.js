@@ -2,8 +2,6 @@ import {createRouter, createWebHashHistory} from "vue-router"
 import Map from './components/Map.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import Home from './components/Home.vue'
-import Lifestyle from './components/Lifestyle.vue'
-import Venuesidebar from './components/Venuesidebar.vue'
 
 const router=createRouter({
     history:createWebHashHistory(),

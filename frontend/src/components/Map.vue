@@ -53,7 +53,7 @@ export default {
     };
   },
   methods: {
-    InitMap() {
+    async InitMap() {
       const initMap = new Promise((resolve, reject) => {
         AMapLoader.load({
           key: `${MapKey}`,
@@ -184,11 +184,11 @@ export default {
       //     console.log(err);
       //   });
     },
-    InitRoad() {
+    async InitRoad() {
       let senddata = {
         action: "get_all",
       };
-      axios
+      await axios
         .post("http://127.0.0.1:8000/api/Road/", senddata)
         .then((res) => {
           this.Roads = res.data;
@@ -197,11 +197,11 @@ export default {
           console.log(error);
         });
     },
-    InitVenue() {
+    async InitVenue() {
       let senddata = {
         action: "get_all_locations",
       };
-      axios
+      await axios
         .post("http://127.0.0.1:8000/api/Location/", senddata)
         .then((res) => {
           this.venues = res.data.locations;
@@ -249,7 +249,7 @@ export default {
       this.ShowRoadFlag = false;
       this.RoadInfoId = 0;
     },
-    ShowVenue(id) {
+    async ShowVenue(id) {
       if (this.RoadInfoId != 0) {
         this.CloseRoad();
       }
@@ -257,9 +257,9 @@ export default {
         this.CloseVenue();
       }
       this.showVenueFlag = true;
-      this.venueInfoId = id
+      this.venueInfoId = id;
       // 子组件自己获取数据
-      this.$refs.venueComponent.getVenue(id)
+      await this.$refs.venueComponent.getVenue(id);
     },
     CloseVenue() {
       this.showVenueFlag = false;
@@ -286,10 +286,10 @@ export default {
     Roadsidebar,
     Venuesidebar,
   },
-  mounted: function () {
-    this.InitRoad();
-    this.InitVenue();
-    this.InitMap();
+  mounted: async function () {
+    await this.InitRoad();
+    await this.InitVenue();
+    await this.InitMap();
   },
 };
 
