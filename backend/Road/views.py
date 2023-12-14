@@ -45,15 +45,11 @@ class RoadView(APIView):
             name = []
             number = []
             points = []
-            base_color = []
-            hover_color = []
             feedback = []
             all_roads = Road.objects.all()
             for road in all_roads:
                 name.append(road.name)
                 number.append(road.number)
-                base_color.append(road.base_color)
-                hover_color.append(road.hover_color)
                 feedback.append(road.feedback)
 
                 Points = Point.objects.filter(road=road)
@@ -66,8 +62,6 @@ class RoadView(APIView):
             return Response(data={
                 "name": name,
                 "id": number,
-                "base_color": base_color,
-                "hover_color": hover_color,
                 "points": points,
                 "feedback": feedback,
                 "status": status.HTTP_200_OK
