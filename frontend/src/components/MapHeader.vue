@@ -7,7 +7,7 @@
       <el-select-v2 v-model="value1" :options="options1" placeholder="功能" style="width: 180px" multiple collapse-tags="true" clearable="true"/>
       <el-select-v2 v-model="value2" :options="options2" placeholder="地点" style="width: 200px" multiple collapse-tags="true" clearable="true"/>
       <el-select-v2 v-model="value3" :options="options3" placeholder="时间" style="width: 230px" multiple collapse-tags="true" clearable="true" item-height="30" />
-      <el-button type="primary" icon="Search" @click="handleChange">Search</el-button>
+      <el-button type="primary" icon="Search" @click="Search">Search</el-button>
     </div>
 
     <el-aside v-if="drawer" id="asideinfo">
@@ -35,11 +35,12 @@
 import Avatar from "./Avatar.vue";
 
 export default {
+  emits: ['search'],
   data() {
     return {
-      value1: "",
-      value2: "",
-      value3: "",
+      value1: [],
+      value2: [],
+      value3: [],
       options1: [
         { value: 1, label: "商店" },
         { value: 2, label: "食堂" },
@@ -107,16 +108,14 @@ export default {
       ]
     };
   },
-  methods:{
-    tagValue2String(){
-      var dic1 = {1: "商店", 2: "食堂", 3: "教室", 4: "自习",5: "打印",6: "办公室",7: "图书馆",8: "运动"}
-      var dic2 = {1: "宿舍区西", 2:"宿舍区东", 3:"教学区", 4: "五四操场", 5:"静园", 6:"校园北部"}
-    }
-  },
   components: {
     Avatar,
   },
   methods: {
+    tagValue2String(){
+      var dic1 = {1: "商店", 2: "食堂", 3: "教室", 4: "自习",5: "打印",6: "办公室",7: "图书馆",8: "运动"}
+      var dic2 = {1: "宿舍区西", 2:"宿舍区东", 3:"教学区", 4: "五四操场", 5:"静园", 6:"校园北部"}
+    },
     handleChange() {
       console.log(this.value1)
       console.log(this.value2)
@@ -133,6 +132,12 @@ export default {
         // 如果不满足条件，就隐藏侧边栏
         this.drawer = false;
       }
+    },
+    Search(){
+      this.$emit('search')
+    },
+    getTags(){
+      return [this.value1, this.value2, this.value3]
     },
     close(){
       this.drawer = false;
