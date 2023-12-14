@@ -10,21 +10,9 @@
       <el-button type="primary" icon="Search" @click="Search">Search</el-button>
     </div>
 
-    <el-aside v-if="drawer" id="asideinfo">
-      <div id="closebutton">
-        <el-button type="danger" circle icon="Close" color="aliceblue" @click="close"/>
-      </div>
-    <el-table v-if="drawer" :data="tableData" id="table" stripe style="width: 100%">
-      <el-table-column prop="id" label="ID" width="180"></el-table-column>
-      <el-table-column prop="name" label="名称" width="180"></el-table-column>
-      <el-table-column prop="star" label="推荐指数" width="180"></el-table-column>
-    </el-table>
-    </el-aside>
-
-    <div id="postButton">
-      <el-button type="primary" icon="Edit" style="width: 120px; height: 50px">
-        发布
-      </el-button>
+    <div id="layerOption" style="display: flex; flex-direction: column;">
+      <el-checkbox v-model="showRoad" style="margin-bottom: 5px; width: 100px;" label="路况" @change="UpdateRoadLayer" border />
+      <el-checkbox v-model="showVenue" style="width: 100px;" label="生活指南" @change="UpdateVenueLayer" border />
     </div>
     <div id="avatar"><Avatar/></div>
     
@@ -32,10 +20,11 @@
 </template>
 
 <script>
+import { ElMessage } from 'element-plus';
 import Avatar from "./Avatar.vue";
 
 export default {
-  emits: ['search'],
+  emits: ['search', 'showRoadLayer', 'closeRoadLayer', 'showVenueLayer', 'closeVenueLayer'],
   data() {
     return {
       value1: [],
@@ -87,61 +76,45 @@ export default {
         { value: 24, label: "23：00" },
         { value: 25, label: "All"}
       ],
-      drawer: false,
-      radio: "",
-      tableData: [
-        {
-          id: 1,
-          name: "家园食堂",
-          star: 5
-        },
-        {
-          id: 2,
-          name: "学一食堂",
-          star: 5
-        },
-        {
-          id: 3,
-          name: "松林餐厅",
-          star: 5
-        }
-      ]
+      showRoad: false,
+      showVenue: false
     };
   },
   components: {
     Avatar,
   },
   methods: {
-    tagValue2String(){
-      var dic1 = {1: "商店", 2: "食堂", 3: "教室", 4: "自习",5: "打印",6: "办公室",7: "图书馆",8: "运动"}
-      var dic2 = {1: "宿舍区西", 2:"宿舍区东", 3:"教学区", 4: "五四操场", 5:"静园", 6:"校园北部"}
-    },
-    handleChange() {
-      console.log(this.value1)
-      console.log(this.value2)
-      console.log(this.value3)
-      // 判断用户的选择是否满足条件
-      if (
-        this.value1.includes(1) &&
-        this.value2.includes(1) &&
-        this.value3.includes(1)
-      ) {
-        // 如果满足条件，就显示侧边栏
-        this.drawer = true;
-      } else {
-        // 如果不满足条件，就隐藏侧边栏
-        this.drawer = false;
-      }
-    },
     Search(){
-      this.$emit('search')
+      // 用户必须指定至少一个功能
+      if(this.value1.length === 0){
+        ElMessage({
+          message: "必须指定一个功能",
+          type: "warning"
+        })
+      }
+      else{
+        this.$emit('search')
+      }
     },
     getTags(){
       return [this.value1, this.value2, this.value3]
     },
-    close(){
-      this.drawer = false;
+    UpdateRoadLayer(){
+      if(this.showRoad){
+        this.$emit('showRoadLayer')
+      }
+      else{
+        this.$emit('closeRoadLayer')
+      }
     },
+    UpdateVenueLayer(){
+      if(this.showVenue){
+        this.$emit('showVenueLayer')
+      }
+      else{
+        this.$emit('closeVenueLayer')
+      }
+    }
   },
 };
 </script>
@@ -176,8 +149,8 @@ export default {
   justify-content: center;
   margin-right: 50px;
 }
-#postButton {
-  margin-left: 200px;
+#layerOption {
+  margin-left: 150px;
 }
 #avatar {
   margin-right: 35px;
