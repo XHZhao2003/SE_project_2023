@@ -29,6 +29,8 @@ class LocationView(APIView):
             return self.get_all_locations(request)
         elif action == 'post_comment':
             return self.post_comment(request)
+        elif action == 'search_location':
+            return self.search_location(request)
         else:
             return Response(data={
                 "msg": str(LocationError("action error")),
@@ -42,40 +44,8 @@ class LocationView(APIView):
         '''
         try:
             id = request.data.get('id')
-            location = Location.objects.get(number=id)
-            comments = Comment.objects.filter(location=location)
-            tags1 = Location_Function.objects.filter(location=location)
-            tags2 = Location_Place.objects.filter(location=location)
-            tags3 = Location_Time.objects.filter(location=location)
-            comments_ = []
-            tags1_ = []
-            tags2_ = []
-            tags3_ = []
-            for comment in comments:
-                dic = {
-                    "content": comment.content,
-                    "username": comment.username,
-                    "timestamp": comment.timestamp
-                }
-                comments_.append(dic)
-            for tag1 in tags1:
-                tags1_.append(tag1.tag.number)
-            for tag2 in tags2:
-                tags2_.append(tag2.tag.number)
-            for tag3 in tags3:
-                tags3_.append(tag3.tag.number)
-                
-            return Response(data={
-                "id": location.number,
-                "name": location.name,
-                "x": location.x,
-                "y": location.y,
-                "opening_hours": location.opening_hours,
-                "description": location.description,
-                "comments": comments_,
-                "tags": [tags1_, tags2_, tags3_],
-                "status": status.HTTP_200_OK
-            })
+            location = self.GetLocationDictById(id)
+            return Response(data=location)
         except Exception as e:
             return Response(data={
                 "msg": str(e),
@@ -85,7 +55,7 @@ class LocationView(APIView):
     @csrf_exempt
     def get_all_locations(self, request):
         '''
-        返回指定地点的信息
+        返回所有地点的信息
         '''
         try:
             locations = Location.objects.all()
@@ -131,3 +101,94 @@ class LocationView(APIView):
                 "status": status.HTTP_400_BAD_REQUEST
             })
         return Response(data={"id": id})
+
+    @csrf_exempt
+    def search_location(self, request):
+        try:
+            locations = Location.objects.all()
+            filteredlocations = []
+            tags = request.data.get('tags')
+            tags1, tags2, tags3 = tags[0], tags[1], tags[2]
+            for location in locations:
+                containTag1 = False
+                containTag2 = False
+                containTag3 = False   
+                # 功能 tag
+                filteredTags1 = Location_Function.objects.filter(location=location)
+                filteredTags1 = [locationTag.tag.id for locationTag in filteredTags1]
+                for tag1 in tags1:
+                    if tag1 in filteredTags1:
+                        containTag1 = True
+                        break
+                # 地点tag
+                if 8 in tags or tags2 == []:   # ALL or No tag2
+                    containTag2 = True
+                else:
+                    filteredTags2 = Location_Place.objects.filter(location=location)
+                    filteredTags2 = [locationTag.tag.id for locationTag in filteredTags2]
+                    for tag2 in tags2:
+                        if tag2 in filteredTags2:
+                            containTag2 = True
+                            break
+                # 时间 tag
+                if 25 in tags3 or tags3 == []:   # ALL or No tag3
+                    containTag3 = True
+                else:
+                    filteredTags3 = Location_Place.objects.filter(location=location)
+                    filteredTags3 = [locationTag.tag.id for locationTag in filteredTags3]
+                    for tag3 in tags3:
+                        if tag3 in filteredTags3:
+                            containTag3 = True
+                            break
+                if containTag1 and containTag2 and containTag3:
+                    filteredlocations.append(location)
+            filteredlocationsDict = []
+            for location in filteredlocations:
+                dict = self.GetLocationDictById(location.id)
+                filteredlocationsDict.append(dict)
+            return Response(data={
+                "result": filteredlocationsDict,
+            })
+        except Exception as e:
+            return Response(data={
+                "msg": str(e),
+                "status": status.HTTP_400_BAD_REQUEST
+            })
+
+    def GetLocationDictById(self, id):
+        location = Location.objects.get(number=id)
+        comments = Comment.objects.filter(location=location)
+        tags1 = Location_Function.objects.filter(location=location)
+        tags2 = Location_Place.objects.filter(location=location)
+        tags3 = Location_Time.objects.filter(location=location)
+        commentsDict = []
+        tags1List = []
+        tags2List = []
+        tags3List = []
+        for comment in comments:
+            dic = {
+                "content": comment.content,
+                "username": comment.username,
+                "timestamp": comment.timestamp
+            }
+            commentsDict.append(dic)
+        for tag1 in tags1:
+            tags1List.append(tag1.tag.number)
+        for tag2 in tags2:
+            tags2List.append(tag2.tag.number)
+        for tag3 in tags3:
+            tags3List.append(tag3.tag.number)    
+        return {
+                "id": location.number,
+                "name": location.name,
+                "x": location.x,
+                "y": location.y,
+                "opening_hours": location.opening_hours,
+                "description": location.description,
+                "comments": commentsDict,
+                "tags": [tags1List, tags2List, tags3List],
+            }
+
+            
+                
+            
