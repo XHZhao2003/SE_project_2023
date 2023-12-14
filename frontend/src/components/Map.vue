@@ -280,12 +280,14 @@ export default {
       else if (crowding === 2) return "#dfe534";
       else return "#46bc1d";
     },
-    async Search(){
-      var header = this.$refs.mapheader
-      var tags = header.getTags()
-      await this.$refs.venueComponent.Search(tags)
-      this.showVenueFlag = true
-    }
+    async Search() {
+      var header = this.$refs.mapheader;
+      var tags = header.getTags();
+      await this.$refs.venueComponent.Search(tags);
+      if(this.$refs.venueComponent.searchResultLength > 0){
+        this.showVenueFlag = true;
+      }
+    },
   },
   components: {
     MapHeader,

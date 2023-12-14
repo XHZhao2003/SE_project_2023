@@ -151,6 +151,8 @@ export default {
   padding-top: 10px;
   width: 280px;
   overflow: hidden;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 .feedbackbutton {
   margin-left: 30px;

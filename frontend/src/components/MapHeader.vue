@@ -134,7 +134,6 @@ export default {
       }
     },
     Search(){
-      console.log(this.value1)
       this.$emit('search')
     },
     getTags(){
