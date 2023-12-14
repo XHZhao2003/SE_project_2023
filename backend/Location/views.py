@@ -4,9 +4,7 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import Location, Comment, TagFunction, TagPlace, TagTime
-from .serializer import CommentSerialzier
 from rest_framework import status
-import datetime
 
 
 from django.shortcuts import render
@@ -27,8 +25,6 @@ class LocationView(APIView):
             return self.get_location_by_id(request)
         elif action == "get_all_locations":
             return self.get_all_locations(request)
-        elif action == 'post_comment':
-            return self.post_comment(request)
         else:
             return Response(data={
                 "msg": str(LocationError("action error")),
@@ -107,27 +103,3 @@ class LocationView(APIView):
                 "msg": str(e),
                 "status": status.HTTP_400_BAD_REQUEST
             })
-    
-    @csrf_exempt
-    def post_comment(self, request):
-        content, username, id, location = "", "", "", ""
-        try:
-            content = request.data.get("content")
-            username = request.data.get("username")
-            id = request.data.get("id")
-            location = Location.objects.get(number=id)
-            data = {
-                "location": location.id,
-                "content": content,
-                "username": username,
-                "timestamp": datetime.datetime.now()
-            }
-            serializer = CommentSerialzier(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        except Exception as e:
-            return Response(data={
-                "msg": str(e),
-                "status": status.HTTP_400_BAD_REQUEST
-            })
-        return Response(data={"id": id})
