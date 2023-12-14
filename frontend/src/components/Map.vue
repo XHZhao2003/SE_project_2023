@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header height="90px">
-        <MapHeader />
+        <MapHeader ref="mapheader" @search="Search" />
       </el-header>
       <el-container>
         <el-main style="overflow: hiddens; height: 700px; width: auto;margin:0px; padding: 0px;">
@@ -259,7 +259,7 @@ export default {
       this.showVenueFlag = true;
       this.venueInfoId = id;
       // 子组件自己获取数据
-      await this.$refs.venueComponent.getVenue(id);
+      await this.$refs.venueComponent.GetVenue(id);
     },
     CloseVenue() {
       this.showVenueFlag = false;
@@ -280,6 +280,12 @@ export default {
       else if (crowding === 2) return "#dfe534";
       else return "#46bc1d";
     },
+    async Search(){
+      var header = this.$refs.mapheader
+      var tags = header.getTags()
+      await this.$refs.venueComponent.Search(tags)
+      this.showVenueFlag = true
+    }
   },
   components: {
     MapHeader,

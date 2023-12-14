@@ -95,10 +95,11 @@ export default {
       tags: "",
       input: "",
       showCommentDialog: false,
+      searchResult: []
     };
   },
   methods: {
-    async getVenue(id) {
+    async GetVenue(id) {
       var senddata = {
         action: "get_location_by_id",
         id: id,
@@ -138,7 +139,10 @@ export default {
       await axios
         .post("http://127.0.0.1:8000/api/Location/", senddata)
         .then((res) => {
-          console.log(res)
+          ElMessage({
+              message: "发送成功!",
+              type: "success",
+            });
         })
         .catch((error) => {
           console.log(error);
@@ -148,6 +152,21 @@ export default {
     close() {
       this.$emit("close-venue");
     },
+    async Search(tags){
+      var senddata = {
+        action: "search_location",
+        tags: tags,
+      }
+      await axios
+        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .then((res) => {
+          console.log(res)
+          this.searchResult = res.data
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   },
 };
 </script>
