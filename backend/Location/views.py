@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from .models import Location, Comment, TagFunction, TagPlace, TagTime
+from .models import Location, Comment, TagFunction, TagPlace, TagTime, Location_Function, Location_Place, Location_Time
 from .serializer import CommentSerialzier
 from rest_framework import status
 import datetime
@@ -44,9 +44,9 @@ class LocationView(APIView):
             id = request.data.get('id')
             location = Location.objects.get(number=id)
             comments = Comment.objects.filter(location=location)
-            tags1 = TagFunction.objects.filter(location=location)
-            tags2 = TagPlace.objects.filter(location=location)
-            tags3 = TagTime.objects.filter(location=location)
+            tags1 = Location_Function.objects.filter(location=location)
+            tags2 = Location_Place.objects.filter(location=location)
+            tags3 = Location_Time.objects.filter(location=location)
             comments_ = []
             tags1_ = []
             tags2_ = []
@@ -59,11 +59,11 @@ class LocationView(APIView):
                 }
                 comments_.append(dic)
             for tag1 in tags1:
-                tags1_.append(tag1.number)
+                tags1_.append(tag1.tag.number)
             for tag2 in tags2:
-                tags2_.append(tag2.number)
+                tags2_.append(tag2.tag.number)
             for tag3 in tags3:
-                tags3_.append(tag3.number)
+                tags3_.append(tag3.tag.number)
                 
             return Response(data={
                 "id": location.number,
