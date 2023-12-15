@@ -1,3 +1,17 @@
+<script setup>
+import { MapKey, MapSecretKey } from "../config/mapConfig";
+//高德API加载器 安装命令： npm i @amap/amap-jsapi-loader
+import AMapLoader from "@amap/amap-jsapi-loader";
+import { Close, Edit, Search } from "@element-plus/icons-vue";
+import { ElMessage, ElMain, ElHeader, ElContainer, ElAside } from "element-plus";
+import axios from "axios";
+import { ref } from "vue";
+import Roadsidebar from "./Roadsidebar.vue";
+import MapHeader from "./MapHeader.vue";
+import Venuesidebar from "./Venuesidebar.vue";
+
+</script>
+
 <template>
   <div>
     <el-container>
@@ -33,16 +47,6 @@
 </template>
   
 <script>
-import { MapKey, MapSecretKey } from "../config/mapConfig";
-//高德API加载器 安装命令： npm i @amap/amap-jsapi-loader
-import AMapLoader from "@amap/amap-jsapi-loader";
-import { Close, Edit, Search } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
-import axios from "axios";
-import { ref } from "vue";
-import Roadsidebar from "./Roadsidebar.vue";
-import MapHeader from "./MapHeader.vue";
-import Venuesidebar from "./Venuesidebar.vue";
 
 export default {
   data() {

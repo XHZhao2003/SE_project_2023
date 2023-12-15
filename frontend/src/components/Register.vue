@@ -1,12 +1,15 @@
 <script setup>
-import {
-  Avatar,
-  ElementPlus,
-  Lock,
-  Message,
-  CircleCheck,
-} from "@element-plus/icons-vue";
+import { Avatar, Lock, Message, CircleCheck } from "@element-plus/icons-vue";
 import { ref } from "vue";
+import {
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElScrollbar,
+  ElCol,
+  ElRow,
+  ElButton,
+} from "element-plus";
 defineEmits(["have-account-login"]);
 </script>
 
@@ -34,27 +37,27 @@ defineEmits(["have-account-login"]);
       </div>
 
       <el-scrollbar style="width: 80%; height: 70%">
-        <el-form :model="user" style="width: 80% text-align:center" :rules="rules" ref="registerRef">
+        <el-form id="registerForm" :model="user" style=" text-align: center" :rules="rules" ref="registerRef">
           <el-form-item prop="username">
-            <el-input prefix-icon="Avatar" size="medium" v-model="user.username" placeholder="请输入4-20位用户名"></el-input>
+            <el-input prefix-icon="Avatar" v-model="user.username" placeholder="请输入4-20位用户名"></el-input>
           </el-form-item>
 
           <el-form-item prop="password">
-            <el-input prefix-icon="Lock" size="medium" show-password v-model="user.password" placeholder="请输入4-20位密码，包含字母与数字"></el-input>
+            <el-input prefix-icon="Lock" show-password v-model="user.password" placeholder="请输入4-20位密码，包含字母与数字"></el-input>
           </el-form-item>
 
           <el-form-item prop="confirmpassword">
-            <el-input prefix-icon="Lock" size="medium" show-password v-model="user.confirmpassword" placeholder="请确认密码"></el-input>
+            <el-input prefix-icon="Lock" show-password v-model="user.confirmpassword" placeholder="请确认密码"></el-input>
           </el-form-item>
 
           <el-form-item prop="email">
-            <el-input prefix-icon="Message" size="medium" v-model="user.email" placeholder="请输入邮箱"></el-input>
+            <el-input prefix-icon="Message" v-model="user.email" placeholder="请输入邮箱"></el-input>
           </el-form-item>
 
           <el-row>
             <el-col :span="16">
               <el-form-item prop="verifycode" :inline="true">
-                <el-input prefix-icon="CircleCheck" size="medium" v-model="user.verifycode" placeholder="请输入验证码"></el-input>
+                <el-input prefix-icon="CircleCheck" v-model="user.verifycode" placeholder="请输入验证码"></el-input>
               </el-form-item>
             </el-col>
 
@@ -68,7 +71,7 @@ defineEmits(["have-account-login"]);
           </el-row>
 
           <el-form-item>
-            <el-button type="primary" style="width: 100%" @click="EventRegister">
+            <el-button id="registerButton" type="primary" style="width: 100%" @click="EventRegister">
               注册
             </el-button>
           </el-form-item>
@@ -90,16 +93,8 @@ import { RESOLVE_COMPONENT } from "@vue/compiler-core";
 import JSEncrypt from "jsencrypt";
 export default {
   data() {
-    const confirmValidator = (rule, value, callback) => {
-      if (value == this.user.password) {
-        callback();
-      } else {
-        callback(new Error("两次输入密码不一致"));
-      }
-    };
-
     return {
-      validRegister: false,
+      validRegister: "",
       user: {
         username: "",
         password: "",
@@ -139,7 +134,13 @@ export default {
         confirmpassword: [
           { required: true, message: "请再次输入密码", trigger: "blur" },
           {
-            validator: confirmValidator,
+            validator: (rule, value, callback) => {
+              if (value == this.user.password) {
+                callback();
+              } else {
+                callback(new Error("两次输入密码不一致"));
+              }
+            },
             message: "两次输入密码不一致",
             trigger: ["blur", "change"],
           },
@@ -173,7 +174,7 @@ export default {
       let data = encryptStr.encrypt(str.toString()); // 进行加密
       return data;
     },
-    EventRegister() {
+    async EventRegister() {
       let senddata = {
         action: "register",
         username: this.user.username,
@@ -182,11 +183,12 @@ export default {
         confirm: this.user.confirmpassword,
         verify_code: this.user.verifycode,
       };
-      this.$refs.registerRef.validate((valid) => {
+
+      this.$refs.registerRef.validate(async (valid) => {
         // 表单自身rules的规则检查
         if (valid) {
           this.validRegister = true
-          axios
+          await axios
             .post("http://127.0.0.1:8000/api/AppUser/", senddata)
             .then((res) => {
               if (res.data.status == 201) {
@@ -197,8 +199,11 @@ export default {
               }
             })
             .catch((error) => {
-              console.log(error);
+              // console.log(error);
             });
+        }
+        else{
+          that.validRegister = false
         }
       });
     },

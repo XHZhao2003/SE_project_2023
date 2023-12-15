@@ -1,3 +1,10 @@
+<script setup>
+import { ElMessage, ElProgress, ElButton, ElDivider } from "element-plus";
+import axios from "axios";
+
+</script>
+
+
 <template>
   <div id="roadname">{{ name }}</div>
   <div id="closebutton">
@@ -43,14 +50,12 @@
       </el-button>
     </div>
   </div>
-  <el-button v-else="ShowFeedBackFlag" type="primary" @click="ShowFeedBack" style="width: 250px; margin: 30px">
+  <el-button id="openFeedbackButton" v-else="ShowFeedBackFlag" type="primary" @click="ShowFeedBack" style="width: 250px; margin: 30px">
     反馈实时路况
   </el-button>
 </template>
 
 <script>
-import { ElMessage } from "element-plus";
-import axios from "axios";
 
 export default {
   name: "Roadsidebar",
@@ -102,13 +107,11 @@ export default {
       this.ShowFeedBackFlag = false;
     },
     FeedBack(type) {
-      // Post something to backend..
       var senddata = {
         action: "feedback_road_crowding",
         id: this.road_id,
         road_crowding: type - 2,
       };
-      console.log(senddata);
       axios
         .post("http://127.0.0.1:8000/api/Road/", senddata)
         .then((res) => {

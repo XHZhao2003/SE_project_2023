@@ -11,7 +11,7 @@
       <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
         营业时间
       </div>
-      <div style="text-align: left; margin-left: 30px;">
+      <div id="opening-hours-content" style="text-align: left; margin-left: 30px;">
         {{this.opening_hours}}
       </div>
     </el-scrollbar>
