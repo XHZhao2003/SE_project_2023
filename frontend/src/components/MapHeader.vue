@@ -11,8 +11,8 @@
     </div>
 
     <div id="layerOption" style="display: flex; flex-direction: column;">
-      <el-checkbox v-model="showRoad" style="margin-bottom: 5px; width: 100px;" label="路况" @change="UpdateRoadLayer" border />
-      <el-checkbox v-model="showVenue" style="width: 100px;" label="生活指南" @change="UpdateVenueLayer" border />
+      <el-checkbox v-model="showRoad" style="margin-bottom: 5px; width: 100px;" label="路况" @change="UpdateRoadLayer" ref="layer1" border />
+      <el-checkbox v-model="showVenue" style="width: 100px;" label="生活指南" @change="UpdateVenueLayer" ref="layer2" border />
     </div>
     <div id="avatar"><Avatar/></div>
     
@@ -116,6 +116,9 @@ export default {
       }
     }
   },
+  mounted: function(){
+    this.showRoad = true
+  }
 };
 </script>
 

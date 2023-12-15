@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     async InitMap() {
-      const initMap = new Promise((resolve, reject) => {
+      const initMap = await new Promise((resolve, reject) => {
         AMapLoader.load({
           key: `${MapKey}`,
           version: "1.4.15",
@@ -109,6 +109,7 @@ export default {
               this.RoadPolylines[i] = polyline;
               this.RoadPolylines[i].hide()
             }
+            console.log("raods are added to map")
 
             // add venues
             var num_of_venues = this.venues.length;
@@ -324,9 +325,10 @@ export default {
     Venuesidebar,
   },
   mounted: async function () {
-    await this.InitRoad();
-    await this.InitVenue();
-    await this.InitMap();
+    await this.InitRoad()
+    await this.InitVenue()
+    await this.InitMap()
+    this.ShowRoadLayer()
   },
 };
 

@@ -62,7 +62,6 @@ defineEmits(["no-account-register"]);
               >注册
             </span>
           </div>
-          <div style="flex: 1; text-align: right">忘记密码</div>
         </div>
       </el-form>
     </div>
@@ -105,10 +104,6 @@ export default {
       this.$refs.loginRef.validate((valid) => {
         // 表单自身rules的规则检查
         if(valid) {
-          console.log(this.user.username);
-          console.log(this.user.password);
-          
-          console.log(this.$getRsaCode(this.user.password));
           let senddata = {
             action:"login",
             username: this.user.username,
@@ -117,11 +112,10 @@ export default {
           axios
             .post("http://127.0.0.1:8000/api/AppUser/", senddata)
             .then((res) => {
-              console.log(res);
               if(res.data.status==200){
                 localStorage.setItem("loginFlag", "true");
                 localStorage.setItem("username", this.user.username)
-                this.$router.push("/HelloWorld");
+                this.$router.push("/Map");
               }
               else{
                 alert("用户名或密码错误");
