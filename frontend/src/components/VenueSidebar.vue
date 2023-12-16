@@ -118,7 +118,7 @@ export default {
         id: id,
       };
       await axios
-        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .post(this.SERVER + "/api/Location/", senddata)
         .then((res) => {
           // update info
           this.name = res.data.name;
@@ -151,7 +151,7 @@ export default {
         username: localStorage.getItem("username"),
       };
       await axios
-        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .post(this.SERVER + "/api/Location/", senddata)
         .then((res) => {
           ElMessage({
             message: "发送成功!",
@@ -175,7 +175,7 @@ export default {
         tags: tags,
       };
       await axios
-        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .post(this.SERVER + "/api/Location/", senddata)
         .then((res) => {
           this.searchResult = res.data.result;
           if (this.searchResult.length === 0) {

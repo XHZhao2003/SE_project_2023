@@ -1,10 +1,3 @@
-<script setup>
-import { Avatar, ElementPlus, Lock } from "@element-plus/icons-vue";
-import { ref } from "vue";
-
-defineEmits(["no-account-register"]);
-</script>
-
 <template>
   <div class="loginBox">
     <div style="width: 100%; height: 40%; text-align: center; overflow: hidden">
@@ -69,9 +62,13 @@ defineEmits(["no-account-register"]);
 </template>
 
 <script>
+import { Avatar, ElementPlus, Lock } from "@element-plus/icons-vue";
+import { ref, getCurrentInstance } from "vue";
 import axios from 'axios'
 import JSEncrypt from 'jsencrypt'
+
 export default {
+  emits: ["no-account-register"],
   data() {
     return {
       user: {
@@ -110,7 +107,7 @@ export default {
             password: this.$getRsaCode(this.user.password)
           }
           axios
-            .post("http://127.0.0.1:8000/api/AppUser/", senddata)
+            .post(this.SERVER + "/api/AppUser/", senddata)
             .then((res) => {
               if(res.data.status==200){
                 localStorage.setItem("loginFlag", "true");

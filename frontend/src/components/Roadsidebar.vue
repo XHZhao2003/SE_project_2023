@@ -113,7 +113,7 @@ export default {
         road_crowding: type - 2,
       };
       axios
-        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .post(this.SERVER + "/api/Road/", senddata)
         .then((res) => {
           console.log(res)
           var status = res.data.msg

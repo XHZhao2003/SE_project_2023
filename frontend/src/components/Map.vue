@@ -200,7 +200,7 @@ export default {
         action: "get_all",
       };
       await axios
-        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .post(this.SERVER + "/api/Road/", senddata)
         .then((res) => {
           this.Roads = res.data;
         })
@@ -213,7 +213,7 @@ export default {
         action: "get_all_locations",
       };
       await axios
-        .post("http://127.0.0.1:8000/api/Location/", senddata)
+        .post(this.SERVER + "/api/Location/", senddata)
         .then((res) => {
           this.venues = res.data.locations;
         })
@@ -238,7 +238,7 @@ export default {
         id: id,
       };
       axios
-        .post("http://127.0.0.1:8000/api/Road/", senddata)
+        .post(this.SERVER + "/api/Road/", senddata)
         .then((res) => {
           // updata color
           var polyline = this.RoadPolylines[id - 1];

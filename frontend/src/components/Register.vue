@@ -1,18 +1,3 @@
-<script setup>
-import { Avatar, Lock, Message, CircleCheck } from "@element-plus/icons-vue";
-import { ref } from "vue";
-import {
-  ElForm,
-  ElFormItem,
-  ElInput,
-  ElScrollbar,
-  ElCol,
-  ElRow,
-  ElButton,
-} from "element-plus";
-defineEmits(["have-account-login"]);
-</script>
-
 <template>
   <div class="registerBox">
     <div style="width: 100%; height: 40%; text-align: center; overflow: hidden">
@@ -89,9 +74,12 @@ defineEmits(["have-account-login"]);
 
 <script>
 import axios from "axios";
-import { RESOLVE_COMPONENT } from "@vue/compiler-core";
 import JSEncrypt from "jsencrypt";
+import { Avatar, Lock, Message, CircleCheck } from "@element-plus/icons-vue";
+import { ref } from "vue";
+
 export default {
+  emits: ["have-account-login"],
   data() {
     return {
       validRegister: "",
@@ -189,7 +177,7 @@ export default {
         if (valid) {
           this.validRegister = true
           await axios
-            .post("http://127.0.0.1:8000/api/AppUser/", senddata)
+            .post(this.SERVER + "/api/AppUser/", senddata)
             .then((res) => {
               if (res.data.status == 201) {
                 alert("注册成功");
@@ -216,7 +204,7 @@ export default {
         // 表单自身rules的规则检查
         if (valid) {
           axios
-            .post("http://127.0.0.1:8000/api/AppUser/", senddata)
+            .post(this.SERVER + "/api/AppUser/", senddata)
             .then((res) => {
               console.log(res);
               alert("验证码发送成功");
@@ -227,7 +215,7 @@ export default {
         }
       });
     },
-  },
+  }
 };
 </script>
 

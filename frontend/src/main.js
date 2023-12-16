@@ -6,12 +6,12 @@ import ElementPlus from 'element-plus'
 import 'element-plus/theme-chalk/index.css' 
 import axios from 'axios'
 
-
-
 const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
 app.mount('#app')
+app.config.globalProperties.SERVER = "http://127.0.0.1:8000"
+
 
 // axios.defaults.xsrfCookieName = 'csrfmiddlewaretoken'
 // axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN'
