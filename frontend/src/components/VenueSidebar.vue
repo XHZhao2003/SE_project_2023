@@ -1,4 +1,5 @@
 <template>
+  <el-scrollbar height="700px">
   <div id="venuename" style="height: 60px; text-align: center; padding-top: 10px; font-size: 30px; font-weight: bold;">
     {{this.name}}
   </div>
@@ -11,14 +12,16 @@
       <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
         营业时间
       </div>
-      <div id="opening-hours-content" style="text-align: left; margin-left: 30px;">
+      <div id="opening-hours-content" style="text-align: left; padding-left: 30px; padding-right: 15px;">
         {{this.opening_hours}}
       </div>
     </el-scrollbar>
   </div>
 
+  <el-divider/>
+
   <div id="Description">
-    <div style="font-size: 20px; text-align: left; padding-top: 10px; height: 30px; font-weight: bold; padding-left: 10px;">
+    <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
       简介
     </div>
     <div style="text-align: left; margin-left: 30px;">
@@ -35,20 +38,20 @@
     </span>
   </div>
 
-  <div id="conmentBox">
+  <el-divider/>
+
+  <div>
     <div style="font-size: 20px; text-align: left; padding-top: 10px; height: 30px; font-weight: bold; padding-left: 10px;">
       评论区
     </div>
-    <el-scrollbar height="250px">
+    <el-scrollbar height="400px">
       <div v-for="comment in this.comments" class="commentItem">
-        <div style="text-align: left; margin-left: 20px;">
+        <div style="text-align: left;  margin-left: 20px; padding-top: 10px; font-size: 20px;">
           {{comment.username}}
         </div>
-        <el-scrollbar height="80px">
-          <div style="text-align: left; margin-left: 30px;">
+          <div style="text-align: left; margin-left: 25px; margin-right: 15px ;min-height: 60px;">
             {{comment.content}}
           </div>
-        </el-scrollbar>
       </div>
     </el-scrollbar>
   </div>
@@ -60,6 +63,7 @@
   <div style="margin-top: 30px;">
     <el-pagination v-show="showSearchResult" v-model:current-page="currentPage" layout="prev, pager, next" :pager-count="5" :page-count="searchResultLength" :hide-on-single-page="true" small=true @current-change="UpdatePage" background style="justify-content: center;" />
   </div>
+</el-scrollbar>
 
   <el-dialog v-model="showCommentDialog">
     <div style="text-align: center; margin-bottom: 10px; font-size: 25px; font-weight: bold;">
@@ -243,7 +247,6 @@ export default {
 }
 
 #description {
-  font-size: 20px;
   text-align: left;
   padding-top: 10px;
   height: 30px;

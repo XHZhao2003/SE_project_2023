@@ -10,7 +10,7 @@ import axios from "axios";
   <div id="closebutton">
     <el-button type="danger" circle icon="Close" color="aliceblue" @click="close" />
   </div>
-  <div style="height: 30px; text-align: left; margin-left: 10px; font-size: 18px;">拥挤指数</div>
+  <div style="height: 30px; text-align: left; padding-left: 15px; font-size: 18px;">拥挤指数</div>
   <div id="progressbar">
     <el-progress :percentage="Crowding2Percentage(crowding)" :stroke-width="25" :show-text="false"/>
   </div>
@@ -19,8 +19,8 @@ import axios from "axios";
     {{Percentage2Text(Crowding2Percentage(crowding))}}
   </div>
 
-  <div v-if="ShowFeedBackFlag" style="width: 300px; height: 200px; text-align: center">
-    <div style="font-size: 15px; text-align: left; height: 30px">
+  <div v-if="ShowFeedBackFlag" style="width: 400px; height: 200px; text-align: center">
+    <div style="font-size: 18px; text-align: left; height: 30px; padding-top: 20px; padding-left: 15px; padding-bottom: 10px;">
       选择实时路况
     </div>
     <div class="feedbackbutton">
@@ -45,7 +45,7 @@ import axios from "axios";
     </div>
 
     <div style="text-align: right">
-      <el-button type="text" @click="CloseFeedBack" style="width: 50px">
+      <el-button type="text" @click="CloseFeedBack" style="width: 50px; margin-right: 30px;">
         返回
       </el-button>
     </div>
@@ -140,6 +140,7 @@ export default {
   width: 300px;
   height: 60px;
   text-align: center;
+  padding-left: 30px;
   padding-top: 10px;
   font-size: 25px;
   font-weight: bold;
@@ -152,13 +153,14 @@ export default {
 #progressbar {
   height: 60px;
   padding-top: 10px;
-  width: 280px;
+  width: 320px;
   overflow: hidden;
-  margin-left: 15px;
-  margin-right: 15px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 .feedbackbutton {
-  margin-left: 30px;
+  margin-left: 60px;
+  justify-self: center;
   width: 250px;
   margin-bottom: 10px;
 }
@@ -166,7 +168,7 @@ export default {
   width: 300px;
   height: 60px;
   text-align: left;
-  font-size: 15px;
-  padding-left: 10px;
+  font-size: 20px;
+  padding-left: 20px;
 }
 </style>

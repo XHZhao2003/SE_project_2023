@@ -385,9 +385,9 @@ function initPlugins() {
   position: absolute;
   z-index: 99;
   top: 95px;
-  left: 80%;
+  left: 75%;
   height: 705px;
-  width: 20%;
+  width: 25%;
   background-color: aliceblue;
   text-align: center;
 }
