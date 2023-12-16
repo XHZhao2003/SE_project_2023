@@ -1,17 +1,3 @@
-<script setup>
-import { MapKey, MapSecretKey } from "../config/mapConfig";
-//高德API加载器 安装命令： npm i @amap/amap-jsapi-loader
-import AMapLoader from "@amap/amap-jsapi-loader";
-import { Close, Edit, Search } from "@element-plus/icons-vue";
-import { ElMessage, ElMain, ElHeader, ElContainer, ElAside } from "element-plus";
-import axios from "axios";
-import { ref } from "vue";
-import Roadsidebar from "./Roadsidebar.vue";
-import MapHeader from "./MapHeader.vue";
-import Venuesidebar from "./Venuesidebar.vue";
-
-</script>
-
 <template>
   <div>
     <el-container>
@@ -47,6 +33,18 @@ import Venuesidebar from "./Venuesidebar.vue";
 </template>
   
 <script>
+import { MapKey, MapSecretKey } from "../config/mapConfig";
+//高德API加载器 安装命令： npm i @amap/amap-jsapi-loader
+import AMapLoader from "@amap/amap-jsapi-loader";
+import { Close, Edit, Search } from "@element-plus/icons-vue";
+import { ElMessage, ElMain, ElHeader, ElContainer, ElAside } from "element-plus";
+import axios from "axios";
+import { ref } from "vue";
+import Roadsidebar from "./Roadsidebar.vue";
+import MapHeader from "./MapHeader.vue";
+import Venuesidebar from "./Venuesidebar.vue";
+
+
 
 export default {
   data() {
@@ -113,7 +111,6 @@ export default {
               this.RoadPolylines[i] = polyline;
               this.RoadPolylines[i].hide()
             }
-            console.log("raods are added to map")
 
             // add venues
             var num_of_venues = this.venues.length;
@@ -294,10 +291,10 @@ export default {
       else if (crowding === 2) return "#dfe534";
       else return "#46bc1d";
     },
-    async Search() {
+    Search() {
       var header = this.$refs.mapheader;
       var tags = header.getTags();
-      await this.$refs.venueComponent.Search(tags);
+      this.$refs.venueComponent.Search(tags);
       if(this.$refs.venueComponent.searchResultLength > 0){
         this.showVenueFlag = true;
       }
