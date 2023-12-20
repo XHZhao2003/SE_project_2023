@@ -134,7 +134,7 @@ class LocationView(APIView):
                 if 25 in tags3 or tags3 == []:   # ALL or No tag3
                     containTag3 = True
                 else:
-                    filteredTags3 = Location_Place.objects.filter(location=location)
+                    filteredTags3 = Location_Time.objects.filter(location=location)
                     filteredTags3 = [locationTag.tag.id for locationTag in filteredTags3]
                     for tag3 in tags3:
                         if tag3 in filteredTags3:
@@ -144,7 +144,7 @@ class LocationView(APIView):
                     filteredlocations.append(location)
             filteredlocationsDict = []
             for location in filteredlocations:
-                dict = self.GetLocationDictById(location.id)
+                dict = self.GetLocationDictById(location.number)
                 filteredlocationsDict.append(dict)
             return Response(data={
                 "result": filteredlocationsDict,

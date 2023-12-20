@@ -126,7 +126,6 @@ class RoadView(APIView):
             if road is None:
                 raise RoadError("road " + str(number) + " does not exist")
 
-            print("------------", road.crowd)
             road.crowd += (int)(info)
             if road.crowd < -30:
                 road.crowd = -30

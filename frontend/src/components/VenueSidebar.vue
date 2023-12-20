@@ -8,9 +8,9 @@
   </div>
 
   <div id="opening-hours">
-    <el-scrollbar height="100px">
+    <el-scrollbar height="70px">
       <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
-        营业时间
+        开放时间
       </div>
       <div id="opening-hours-content" style="text-align: left; padding-left: 30px; padding-right: 15px;">
         {{this.opening_hours}}
@@ -24,13 +24,13 @@
     <div style="font-size: 20px; text-align: left; height: 30px; font-weight: bold; padding-left: 10px;">
       简介
     </div>
-    <div style="text-align: left; margin-left: 30px;">
+    <div style="text-align: left; margin-left: 30px; padding-right: 10px;">
       {{this.description}}
     </div>
   </div>
 
-  <div id="tags" style="padding-top: 10px; display: flex; justify-items: left;">
-    <span v-for="tag1 in this.tags[0]" style="margin-left: 20px; margin-right: 5px;">
+  <div id="tags" style="margin-left: 20px; padding-top: 10px; display: flex; justify-items: left;">
+    <span v-for="tag1 in this.tags[0]" style="margin-right: 5px;">
       <el-tag>{{this.Tag12String(tag1)}}</el-tag>
     </span>
     <span v-for="tag2 in this.tags[1]">
