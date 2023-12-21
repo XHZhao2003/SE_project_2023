@@ -10,7 +10,7 @@ const app = createApp(App)
 app.use(router)
 app.use(ElementPlus)
 app.mount('#app')
-app.config.globalProperties.SERVER = "http://127.0.0.1:8000"
+app.config.globalProperties.SERVER = "http://8.140.199.201:10001"
 
 
 // axios.defaults.xsrfCookieName = 'csrfmiddlewaretoken'

@@ -34,10 +34,10 @@ export default {
   data() {
     return {
       imgList: [
-        { id: 0, idView: "../src/assets/corousel1.jpg" },
-        { id: 1, idView: "../src/assets/corousel2.jpg" },
-        { id: 2, idView: "../src/assets/corousel3.jpg" },
-        { id: 3, idView: "../src/assets/corousel4.jpg" },
+        { id: 0, idView: "/corousel1.jpg" },
+        { id: 1, idView: "/corousel2.jpg" },
+        { id: 2, idView: "/corousel3.jpg" },
+        { id: 3, idView: "/corousel4.jpg" },
       ],
       ShowLogin: false,
       ShowRegister: false,

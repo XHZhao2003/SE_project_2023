@@ -110,7 +110,7 @@ export default {
       var senddata = {
         action: "feedback_road_crowding",
         id: this.road_id,
-        road_crowding: type - 1,
+        road_crowding: type - 2,
       };
       axios
         .post(this.SERVER + "/api/Road/", senddata)
