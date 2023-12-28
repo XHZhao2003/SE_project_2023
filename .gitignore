@@ -4,3 +4,5 @@ backend/logs/*
 backend/*/__pycache__/*
 backend/*/migrations/__pycache__/*
 *.exe
+backend/uwsgi.pid
+backend/static
