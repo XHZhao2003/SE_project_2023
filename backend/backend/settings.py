@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%9!_+yk$+05xt#-q3#h@5o0wns$%_o5@0(=)bbjm@dgc6fmnh6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL=True
@@ -138,8 +138,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\', '/')  # 指定样�
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_HOST = 'smtp.qq.com'
-EMAIL_HOST_USER = '1062276988@qq.com'
-EMAIL_HOST_PASSWORD = 'nwxzivbblipubdhj'
 # EMAIL_HOST_USER = '此处填写你的邮箱地址'
 # EMAIL_HOST_PASSWORD = '此处填写你的邮箱授权码'
 EMAIL_PORT = 587 #根据邮箱的不同，端口号也不同，网易系邮箱似乎多为25或465
